@@ -43,5 +43,41 @@
     "maxLevel": 1,
     "date": "16/10/2026",
     "timestamp": 1729091000000
+  },
+  {
+    "playerId": "bot_taynara",
+    "nickname": "Taynara",
+    "characterId": "taynara",
+    "score": 240,
+    "maxLevel": 1,
+    "date": "16/10/2026",
+    "timestamp": 1729090500000
+  },
+  {
+    "playerId": "bot_matheus",
+    "nickname": "Matheus",
+    "characterId": "matheus",
+    "score": 220,
+    "maxLevel": 1,
+    "date": "16/10/2026",
+    "timestamp": 1729090400000
+  },
+  {
+    "playerId": "bot_emyli",
+    "nickname": "Emyli",
+    "characterId": "emyli",
+    "score": 200,
+    "maxLevel": 1,
+    "date": "16/10/2026",
+    "timestamp": 1729090300000
+  },
+  {
+    "playerId": "bot_lais",
+    "nickname": "Lais",
+    "characterId": "lais",
+    "score": 180,
+    "maxLevel": 1,
+    "date": "16/10/2026",
+    "timestamp": 1729090200000
   }
 ]

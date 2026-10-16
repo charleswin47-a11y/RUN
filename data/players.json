@@ -48,5 +48,45 @@
     "lastLogin": 1729091000000,
     "bestScore": 260,
     "matchesPlayed": 5
+  },
+  "bot_taynara": {
+    "id": "bot_taynara",
+    "secret": "bot_secret_taynara_retro",
+    "nickname": "Taynara",
+    "favoriteChar": "taynara",
+    "createdAt": 1729090500000,
+    "lastLogin": 1729090500000,
+    "bestScore": 240,
+    "matchesPlayed": 4
+  },
+  "bot_matheus": {
+    "id": "bot_matheus",
+    "secret": "bot_secret_matheus_retro",
+    "nickname": "Matheus",
+    "favoriteChar": "matheus",
+    "createdAt": 1729090400000,
+    "lastLogin": 1729090400000,
+    "bestScore": 220,
+    "matchesPlayed": 4
+  },
+  "bot_emyli": {
+    "id": "bot_emyli",
+    "secret": "bot_secret_emyli_retro",
+    "nickname": "Emyli",
+    "favoriteChar": "emyli",
+    "createdAt": 1729090300000,
+    "lastLogin": 1729090300000,
+    "bestScore": 200,
+    "matchesPlayed": 3
+  },
+  "bot_lais": {
+    "id": "bot_lais",
+    "secret": "bot_secret_lais_retro",
+    "nickname": "Lais",
+    "favoriteChar": "lais",
+    "createdAt": 1729090200000,
+    "lastLogin": 1729090200000,
+    "bestScore": 180,
+    "matchesPlayed": 3
   }
 }

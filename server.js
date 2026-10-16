@@ -52,7 +52,11 @@ let leaderboard = loadJsonSafe(LEADERBOARD_FILE, [
   { playerId: 'bot_wendel', nickname: 'Wendel', characterId: 'wendel', score: 380, maxLevel: 2, date: '16/10/2026', timestamp: 1729094000000 },
   { playerId: 'bot_muniz', nickname: 'Muniz', characterId: 'muniz', score: 310, maxLevel: 2, date: '16/10/2026', timestamp: 1729093000000 },
   { playerId: 'bot_clarinha', nickname: 'Clarinha', characterId: 'clarinha', score: 290, maxLevel: 1, date: '16/10/2026', timestamp: 1729092000000 },
-  { playerId: 'bot_joao', nickname: 'Joao', characterId: 'joao', score: 260, maxLevel: 1, date: '16/10/2026', timestamp: 1729091000000 }
+  { playerId: 'bot_joao', nickname: 'Joao', characterId: 'joao', score: 260, maxLevel: 1, date: '16/10/2026', timestamp: 1729091000000 },
+  { playerId: 'bot_taynara', nickname: 'Taynara', characterId: 'taynara', score: 240, maxLevel: 1, date: '16/10/2026', timestamp: 1729090500000 },
+  { playerId: 'bot_matheus', nickname: 'Matheus', characterId: 'matheus', score: 220, maxLevel: 1, date: '16/10/2026', timestamp: 1729090400000 },
+  { playerId: 'bot_emyli', nickname: 'Emyli', characterId: 'emyli', score: 200, maxLevel: 1, date: '16/10/2026', timestamp: 1729090300000 },
+  { playerId: 'bot_lais', nickname: 'Lais', characterId: 'lais', score: 180, maxLevel: 1, date: '16/10/2026', timestamp: 1729090200000 }
 ]);
 
 // Se players estiver vazio, preenche automaticamente e salva no disco
@@ -62,7 +66,11 @@ if (!players || Object.keys(players).length === 0) {
     bot_wendel: { id: 'bot_wendel', secret: 'bot_secret_wendel_retro', nickname: 'Wendel', favoriteChar: 'wendel', createdAt: 1729094000000, lastLogin: 1729094000000, bestScore: 380, matchesPlayed: 9 },
     bot_muniz: { id: 'bot_muniz', secret: 'bot_secret_muniz_retro', nickname: 'Muniz', favoriteChar: 'muniz', createdAt: 1729093000000, lastLogin: 1729093000000, bestScore: 310, matchesPlayed: 7 },
     bot_clarinha: { id: 'bot_clarinha', secret: 'bot_secret_clarinha_retro', nickname: 'Clarinha', favoriteChar: 'clarinha', createdAt: 1729092000000, lastLogin: 1729092000000, bestScore: 290, matchesPlayed: 6 },
-    bot_joao: { id: 'bot_joao', secret: 'bot_secret_joao_retro', nickname: 'Joao', favoriteChar: 'joao', createdAt: 1729091000000, lastLogin: 1729091000000, bestScore: 260, matchesPlayed: 5 }
+    bot_joao: { id: 'bot_joao', secret: 'bot_secret_joao_retro', nickname: 'Joao', favoriteChar: 'joao', createdAt: 1729091000000, lastLogin: 1729091000000, bestScore: 260, matchesPlayed: 5 },
+    bot_taynara: { id: 'bot_taynara', secret: 'bot_secret_taynara_retro', nickname: 'Taynara', favoriteChar: 'taynara', createdAt: 1729090500000, lastLogin: 1729090500000, bestScore: 240, matchesPlayed: 4 },
+    bot_matheus: { id: 'bot_matheus', secret: 'bot_secret_matheus_retro', nickname: 'Matheus', favoriteChar: 'matheus', createdAt: 1729090400000, lastLogin: 1729090400000, bestScore: 220, matchesPlayed: 4 },
+    bot_emyli: { id: 'bot_emyli', secret: 'bot_secret_emyli_retro', nickname: 'Emyli', favoriteChar: 'emyli', createdAt: 1729090300000, lastLogin: 1729090300000, bestScore: 200, matchesPlayed: 3 },
+    bot_lais: { id: 'bot_lais', secret: 'bot_secret_lais_retro', nickname: 'Lais', favoriteChar: 'lais', createdAt: 1729090200000, lastLogin: 1729090200000, bestScore: 180, matchesPlayed: 3 }
   };
   saveJsonAtomic(PLAYERS_FILE, players);
 }
