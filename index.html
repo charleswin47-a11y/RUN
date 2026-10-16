@@ -2187,12 +2187,13 @@
     },
     douglas: {
       id: 'sword_slash',
-      name: 'Espadada',
+      name: 'Espada Dupla',
       type: 'Combate corpo a corpo',
-      duration: 0.35,
-      cooldown: 3.8,
-      range: 180,
-      desc: 'Golpeia em arco com a espada, fatiando obstáculos até 180px à frente! (Recarga: 3.8s)'
+      duration: 0.28,
+      cooldown: 3.2,
+      maxCharges: 2,
+      range: 200,
+      desc: 'Golpeia em arco afiado com 2 cargas rápidas! Execute combos fatiando obstáculos até 200px à frente! (2 Cargas | 3.2s recarga)'
     },
     nalu: {
       id: 'super_blonde',
@@ -2274,27 +2275,29 @@
       name: 'Hambúrguer Voador',
       type: 'Ataque à distância',
       duration: 0,
-      cooldown: 5.0,
+      cooldown: 5.6,
       projectileSpeed: 14,
-      desc: 'Arremessa um hambúrguer gigante artesanal que gira pela pista, atropelando obstáculos com chuva de gergelim, queijo e molho! (Recarga: 5s)'
+      maxHits: 3,
+      desc: 'Arremessa um hambúrguer artesanal gigante que perfura até 3 obstáculos em sequência antes de explodir! (3 Impactos | Recarga: 5.6s)'
     },
     emyli: {
       id: 'giant_burger',
       name: 'Hambúrguer Voador',
       type: 'Ataque à distância',
       duration: 0,
-      cooldown: 5.0,
+      cooldown: 5.6,
       projectileSpeed: 14,
-      desc: 'Arremessa um hambúrguer gigante artesanal que gira pela pista, atropelando obstáculos com chuva de gergelim, queijo e molho! (Recarga: 5s)'
+      maxHits: 3,
+      desc: 'Arremessa um hambúrguer artesanal gigante que perfura até 3 obstáculos em sequência antes de explodir! (3 Impactos | Recarga: 5.6s)'
     },
     lais: {
       id: 'magic_spell',
       name: 'Feitiço Prismático',
       type: 'Magia Arcana',
-      duration: 1.6,
-      cooldown: 7.5,
-      range: 480,
-      desc: 'Conjura um feitiço arcano com raios místicos, runas brilhantes e estrelas que desintegram todos os obstáculos à frente! (Recarga: 7.5s)'
+      duration: 0.75,
+      cooldown: 6.5,
+      range: 380,
+      desc: 'Conjura uma poderosa rajada de energia mística e runas cósmicas que limpa até 380px da pista à frente! (Bônus Arcana +15 | Recarga: 6.5s)'
     }
   };
 
@@ -4209,7 +4212,10 @@
     di5Preparing: false,
     di5PrepTimer: 0,
     scoreMultiplier: 1.0,
-    isInvincible: false
+    isInvincible: false,
+    charges: 1,
+    maxCharges: 1,
+    douglasComboStep: 0
   };
 
   // Entidades no Mundo & Cenário Parallax
@@ -4324,6 +4330,47 @@
       return;
     }
 
+    // Douglas: Espada Dupla (2 Cargas com combos encadeados)
+    if (config.id === 'sword_slash') {
+      if (skillState.charges <= 0) {
+        showToast(`SEM CARGAS! RECARREGANDO... (${skillState.cooldownRemaining.toFixed(1)}s)`);
+        return;
+      }
+
+      skillState.charges--;
+      skillState.douglasComboStep = (skillState.douglasComboStep + 1) % 2;
+
+      // Inicia recarga se o timer não estava rodando
+      if (skillState.cooldownRemaining <= 0) {
+        skillState.cooldownRemaining = config.cooldown || 3.2;
+      }
+
+      matchStats.skillsUsed++;
+      player.animState = ANIM_STATE.SKILL_START;
+      player.stateTimer = 0.12;
+
+      audio.playDouglasSwordSwing();
+      skillState.isActive = true;
+      skillState.activeDuration = config.duration || 0.28;
+
+      const slashRange = config.range || 200;
+      let hitAny = false;
+      obstacles.forEach(o => {
+        if (!o.destroyed && o.x >= player.x && o.x <= player.x + slashRange + o.w) {
+          hitAny = true;
+          destroyObstacleWithEffect(o, '#00f0ff');
+          audio.playDouglasSwordHit();
+        }
+      });
+      if (hitAny) {
+        showToast(`GOLPE #${skillState.douglasComboStep === 1 ? '1' : '2'}! FATIADO! ⚔️`);
+      } else {
+        showToast(`ESPADADA NO VÁCUO! [${skillState.charges}/2 CARGAS]`);
+      }
+      updateSkillHud();
+      return;
+    }
+
     if (skillState.cooldownRemaining > 0 || skillState.isActive) {
       showToast(`SKILL RECARREGANDO... (${skillState.cooldownRemaining.toFixed(1)}s)`);
       return;
@@ -4373,25 +4420,6 @@
       skillState.activeDuration = config.duration;
       skillState.isInvincible = true;
       showToast('CARRINHO TURBO ATIVADO! IMUNIDADE!');
-
-    } else if (config.id === 'sword_slash') {
-      audio.playDouglasSwordSwing();
-      skillState.isActive = true;
-      skillState.activeDuration = config.duration;
-      const slashRange = config.range || 180;
-      let hitAny = false;
-      obstacles.forEach(o => {
-        if (!o.destroyed && o.x >= player.x && o.x <= player.x + slashRange + o.w) {
-          hitAny = true;
-          destroyObstacleWithEffect(o, '#00f0ff');
-          audio.playDouglasSwordHit();
-        }
-      });
-      if (hitAny) {
-        showToast('ESPADADA! OBSTÁCULO FATIADO!');
-      } else {
-        showToast('ESPADADA NO VÁCUO!');
-      }
 
     } else if (config.id === 'super_blonde') {
       audio.playNaluSparkle();
@@ -4613,6 +4641,33 @@
 
     if (shieldBadge) {
       shieldBadge.style.display = 'none';
+    }
+
+    const isDouglas = getCurrentFriend().id === 'douglas';
+    if (isDouglas) {
+      const maxC = 2;
+      const c = skillState.charges !== undefined ? skillState.charges : 2;
+      const totalCd = config.cooldown || 3.2;
+      const pct = c === maxC ? 100 : Math.max(0, 1 - (skillState.cooldownRemaining / totalCd)) * 100;
+      skillHudProgress.style.width = `${pct}%`;
+
+      if (c === 2) {
+        skillHudStatus.textContent = 'PRONTA [2/2 CARGAS] [X]';
+        skillHudStatus.style.color = '#38bdf8';
+        touchSkillLabel.innerHTML = `<span class="pixel-btn-icon">${PIXEL_ICONS.sword_slash}</span> ESPADA (2x)`;
+        touchSkillBtn.classList.add('ready');
+      } else if (c === 1) {
+        skillHudStatus.textContent = `1/2 CARGAS (${skillState.cooldownRemaining.toFixed(1)}s) [X]`;
+        skillHudStatus.style.color = 'var(--accent-green)';
+        touchSkillLabel.innerHTML = `<span class="pixel-btn-icon">${PIXEL_ICONS.sword_slash}</span> ESPADA (1x)`;
+        touchSkillBtn.classList.add('ready');
+      } else {
+        skillHudStatus.textContent = `RECARREGANDO: ${skillState.cooldownRemaining.toFixed(1)}s [0/2]`;
+        skillHudStatus.style.color = 'var(--text-muted)';
+        touchSkillLabel.innerHTML = `<span class="pixel-btn-icon">${PIXEL_ICONS.sword_slash}</span> ${skillState.cooldownRemaining.toFixed(1)}s`;
+        touchSkillBtn.classList.remove('ready');
+      }
+      return;
     }
 
     const isClarinha = getCurrentFriend().id === 'clarinha';
@@ -5001,17 +5056,83 @@
       }
     }
 
-    // Douglas: Espadada em arco cortante
+    // Douglas: Espadada em arco cortante dinâmico com lâmina pixel art detalhada & rastro de energia
     if (friend.id === 'douglas' && skillState.isActive) {
-      drawPixelRect(targetCtx, x + 28, bodyY + 8, 22, 4, '#e2e8f0');
-      drawPixelRect(targetCtx, x + 24, bodyY + 6, 4, 8, '#b45309');
-      targetCtx.strokeStyle = '#00f0ff';
-      targetCtx.lineWidth = 3;
+      const slashDur = (getCurrentAbilityConfig() && getCurrentAbilityConfig().duration) || 0.28;
+      const progress = Math.min(1, Math.max(0, 1 - (skillState.activeDuration / slashDur)));
+      const isSecondStep = skillState.douglasComboStep === 0; // se step 0 acabou de ser usado, é o golpe 2
+      const handX = x + 24;
+      const handY = bodyY + 12;
+
+      // Ângulo de corte dinâmico com interpolação suave
+      // Golpe 1: Corte diagonal descendente poderoso (-68° a +65°)
+      // Golpe 2: Corte ascendente rápido em cruz (+72° a -50°)
+      let swordAngle;
+      if (!isSecondStep) {
+        swordAngle = -1.18 + progress * 2.32; // -68° -> +65°
+      } else {
+        swordAngle = 1.25 - progress * 2.15; // +72° -> -50°
+      }
+
+      // 1. Desenha a espada física detalhada em pixel art
+      targetCtx.save();
+      targetCtx.translate(handX, handY);
+      targetCtx.rotate(swordAngle);
+
+      // Pomo de rubi reluzente
+      drawPixelRect(targetCtx, -7, -2, 3, 4, '#dc2626');
+      drawPixelRect(targetCtx, -6, -1, 1, 2, '#f87171');
+      // Cabo de couro encordoado
+      drawPixelRect(targetCtx, -4, -2, 6, 4, '#78350f');
+      drawPixelRect(targetCtx, -2, -2, 2, 4, '#fbbf24');
+      // Guarda de ouro maciço
+      drawPixelRect(targetCtx, 2, -7, 4, 14, '#d97706');
+      drawPixelRect(targetCtx, 3, -6, 2, 12, '#fbbf24');
+      // Lâmina de aço afiado com bisel duplo
+      drawPixelRect(targetCtx, 6, -3, 26, 6, '#cbd5e1');
+      drawPixelRect(targetCtx, 6, 1, 26, 2, '#475569'); // dorso sombreado
+      drawPixelRect(targetCtx, 8, -2, 22, 2, '#ffffff'); // fio de corte brilhante
+      // Ponta de diamante perfurante
+      drawPixelRect(targetCtx, 32, -2, 3, 4, '#f8fafc');
+      drawPixelRect(targetCtx, 35, -1, 2, 2, '#00f0ff'); // reflexo azul neon
+
+      targetCtx.restore();
+
+      // 2. Rastro de corte em arco neon brilhante (Crescent Slash Wave)
+      targetCtx.save();
+      targetCtx.lineCap = 'round';
+      const arcRadius = 40;
+      const arcCenterAngle = swordAngle;
+      const arcSpan = 0.55;
+
+      // Camada externa: halo ciano
+      targetCtx.strokeStyle = 'rgba(0, 240, 255, 0.35)';
+      targetCtx.lineWidth = 10;
       targetCtx.beginPath();
-      targetCtx.arc(x + 35, bodyY + 16, 36, -Math.PI / 4, Math.PI / 3);
+      targetCtx.arc(handX, handY, arcRadius, arcCenterAngle - arcSpan, arcCenterAngle + arcSpan);
       targetCtx.stroke();
-      if (Math.random() > 0.4) {
-        particles.emitSwordSparks(x + 35, bodyY + 16);
+
+      // Camada média: energia azul-elétrica
+      targetCtx.strokeStyle = 'rgba(56, 189, 248, 0.8)';
+      targetCtx.lineWidth = 5;
+      targetCtx.beginPath();
+      targetCtx.arc(handX, handY, arcRadius, arcCenterAngle - (arcSpan * 0.8), arcCenterAngle + (arcSpan * 0.8));
+      targetCtx.stroke();
+
+      // Núcleo cortante branco puro
+      targetCtx.strokeStyle = '#ffffff';
+      targetCtx.lineWidth = 2;
+      targetCtx.beginPath();
+      targetCtx.arc(handX, handY, arcRadius, arcCenterAngle - (arcSpan * 0.5), arcCenterAngle + (arcSpan * 0.5));
+      targetCtx.stroke();
+
+      targetCtx.restore();
+
+      // 3. Faíscas dinâmicas voando à frente da ponta da lâmina
+      const tipX = handX + Math.cos(swordAngle) * 38;
+      const tipY = handY + Math.sin(swordAngle) * 38;
+      if (Math.random() > 0.15) {
+        particles.emitSwordSparks(tipX, tipY);
       }
     }
 
@@ -5540,6 +5661,9 @@
     skillState.di5ShieldActive = false;
     skillState.di5Preparing = false;
     skillState.di5PrepTimer = 0;
+    skillState.charges = (friend.id === 'douglas') ? 2 : 1;
+    skillState.maxCharges = (friend.id === 'douglas') ? 2 : 1;
+    skillState.douglasComboStep = 0;
     if (shieldBadge) shieldBadge.style.display = 'none';
 
     updateSkillHud();
@@ -6813,15 +6937,24 @@
         }
 
         if (!p.hitSet) p.hitSet = new Set();
-        obstacles.forEach(o => {
+        if (p.hitsLeft === undefined) p.hitsLeft = 3; // Balanceado: perfura até 3 obstáculos
+        for (const o of obstacles) {
           if (!o.destroyed && !p.hitSet.has(o) && p.x + p.w > o.x && p.x < o.x + o.w && p.y + p.h > o.y && p.y < o.y + o.h) {
             p.hitSet.add(o);
             destroyObstacleWithEffect(o, '#f59e0b');
             audio.playEmilyBurgerImpact();
             particles.emitBurgerIngredients(o.x + o.w / 2, o.y + o.h / 2);
             screenShake = Math.max(screenShake, 6);
+            p.hitsLeft--;
+            if (p.hitsLeft <= 0) {
+              p.destroyed = true;
+              for (let b = 0; b < 22; b++) {
+                particles.emitBurgerIngredients(p.x + 16, p.y + 12);
+              }
+              break;
+            }
           }
-        });
+        }
       }
     });
 
@@ -6921,11 +7054,11 @@
         });
       }
 
-      // Feitiço Arcana da Lais (Raios, supernova e runas)
+      // Feitiço Arcana da Lais (Raios, supernova e runas - Balanceado e concentrado)
       if (e.type === 'lais_spell') {
         e.timer = (e.timer || e.maxTimer) - dt * 0.016;
         const progress = Math.min(1, 1 - (e.timer / e.maxTimer));
-        const currentReach = Math.min(e.w, e.w * progress * 3.2);
+        const currentReach = Math.min(e.w, e.w * progress * 3.4);
         const sx = Math.round(e.x);
         const ex = Math.round(e.x + currentReach);
         const sy = Math.round(e.y);
@@ -6937,24 +7070,24 @@
           ctx.lineWidth = 3;
           ctx.beginPath();
           ctx.moveTo(sx, sy);
-          for (let lx = sx; lx < ex; lx += 24) {
-            const zig = (Math.random() - 0.5) * 22;
+          for (let lx = sx; lx < ex; lx += 22) {
+            const zig = (Math.random() - 0.5) * 20;
             ctx.lineTo(lx, sy + zig);
           }
           ctx.stroke();
 
-          ctx.strokeStyle = '#a855f7';
+          ctx.strokeStyle = '#c084fc';
           ctx.lineWidth = 2;
           ctx.beginPath();
           ctx.moveTo(sx, sy);
-          for (let lx = sx; lx < ex; lx += 20) {
-            const zag = (Math.random() - 0.5) * 18;
+          for (let lx = sx; lx < ex; lx += 18) {
+            const zag = (Math.random() - 0.5) * 16;
             ctx.lineTo(lx, sy + zag);
           }
           ctx.stroke();
         } else if (variant === 1) {
-          // Feixe prismático cósmico
-          const beamH = 34 + Math.sin(frameCount * 0.4) * 8;
+          // Feixe prismático cósmico concentrado
+          const beamH = 30 + Math.sin(frameCount * 0.5) * 6;
           const grad = ctx.createLinearGradient(sx, sy, ex, sy);
           grad.addColorStop(0, 'rgba(168, 85, 247, 0.7)');
           grad.addColorStop(0.5, 'rgba(0, 240, 255, 0.85)');
@@ -6963,23 +7096,26 @@
           ctx.fillRect(sx, sy - beamH / 2, currentReach, beamH);
         } else {
           // Runas arcanas e estrelas cintilantes
-          for (let rx = sx; rx < ex; rx += 42) {
-            const rY = sy + Math.sin((rx + frameCount * 4) * 0.1) * 16;
-            ctx.fillStyle = (rx % 84 === 0) ? '#00f0ff' : '#ec4899';
-            ctx.font = 'bold 14px monospace';
+          for (let rx = sx; rx < ex; rx += 36) {
+            const rY = sy + Math.sin((rx + frameCount * 4) * 0.1) * 14;
+            ctx.fillStyle = (rx % 72 === 0) ? '#00f0ff' : '#ec4899';
+            ctx.font = 'bold 15px monospace';
             ctx.fillText('✦', rx, rY);
             ctx.fillStyle = '#fde047';
-            ctx.fillText('✧', rx + 14, rY + 8);
+            ctx.fillText('✧', rx + 12, rY + 6);
           }
         }
 
-        if (Math.random() > 0.3) {
-          particles.emitMagicRunes(sx + Math.random() * currentReach, sy + (Math.random() - 0.5) * 36, variant);
+        if (Math.random() > 0.25) {
+          particles.emitMagicRunes(sx + Math.random() * currentReach, sy + (Math.random() - 0.5) * 32, variant);
         }
 
+        if (!e.hitSet) e.hitSet = new Set();
         obstacles.forEach(o => {
-          if (!o.destroyed && o.x >= sx && o.x <= ex + 15) {
+          if (!o.destroyed && !e.hitSet.has(o) && o.x >= sx && o.x <= ex + 15) {
+            e.hitSet.add(o);
             destroyObstacleWithEffect(o, variant === 0 ? '#00f0ff' : '#a855f7');
+            score += 15; // Bônus arcano (+15 pts)
             particles.emitMagicRunes(o.x + o.w / 2, o.y + o.h / 2, variant);
           }
         });
@@ -7148,6 +7284,9 @@
     skillState.di5ShieldActive = false;
     skillState.di5Preparing = false;
     skillState.di5PrepTimer = 0;
+    skillState.charges = (getCurrentFriend().id === 'douglas') ? 2 : 1;
+    skillState.maxCharges = (getCurrentFriend().id === 'douglas') ? 2 : 1;
+    skillState.douglasComboStep = 0;
     if (shieldBadge) shieldBadge.style.display = 'none';
     if (scoreMultBadge) scoreMultBadge.style.display = 'none';
 
@@ -7383,6 +7522,17 @@
     // Cooldown e Duração de Skill
     if (skillState.cooldownRemaining > 0) {
       skillState.cooldownRemaining = Math.max(0, skillState.cooldownRemaining - dtSeconds);
+      if (skillState.cooldownRemaining <= 0) {
+        if (getCurrentFriend().id === 'douglas') {
+          if (skillState.charges < (skillState.maxCharges || 2)) {
+            skillState.charges++;
+            if (skillState.charges < (skillState.maxCharges || 2)) {
+              const cfg = getCurrentAbilityConfig();
+              skillState.cooldownRemaining = cfg.cooldown || 3.2;
+            }
+          }
+        }
+      }
       updateSkillHud();
     }
 
@@ -7404,7 +7554,7 @@
           activeEngineLoop = null;
         }
         const config = getCurrentAbilityConfig();
-        if (config && config.cooldown) {
+        if (config && config.cooldown && getCurrentFriend().id !== 'douglas') {
           startSkillCooldown(config.cooldown);
         }
       }

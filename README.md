@@ -114,7 +114,7 @@ O jogo possui agora um sistema progressivo e equilibrado de 5 níveis de dificul
 | **Wendel** | **Chuteira Míssil** | Ataque | Dispara bola de futebol veloz (15 px/f) que destrói o obstáculo. | 4.0s |
 | **Muniz** | **Espírito do Vasco** | Especial | Voz sintetizada "VASCOOOO!" com reverberação e fantasma alvinegro que limpa a pista. | 6.5s (dura 1.5s) |
 | **Joao** | **Carrinho Turbo** | Mobilidade | Kart turbo (+3.5 vel) com motor contínuo e invulnerabilidade total. | 7.0s (dura 2.8s) |
-| **Douglas** | **Espada** | Combate | Golpe "SHING!" metálico cortante que fatia obstáculos até 180px. | 3.8s (ataque 0.35s) |
+| **Douglas** | **Espada Dupla** | Combate / Combo | Golpeia com lâmina afiada em **2 cargas rápidas** com combos encadeados e rastro de energia neon fatiando obstáculos até 200px! | 3.2s por carga (2 Cargas) |
 | **Nalu** | **Modo Loira Suprema** | Magia / Buff | Brilho mágico ascendente com sininhos e **pontos x1.5 (+50%)**! | 7.0s (dura 3.8s) |
 | **Beatriz** | **Rioqualit** | Água / Especial | Onda d'água azul com som aquático que varre o perigo da pista. | 6.5s (dura 1.5s) |
 | **Vitor (Sonic)** | **Modo Sonic** | Arcade | Supervelocidade (+4.0 vel) com rastro neon e som laser hipersônico. | 7.5s (dura 3.2s) |
@@ -122,6 +122,10 @@ O jogo possui agora um sistema progressivo e equilibrado de 5 níveis de dificul
 | **Julya** | **Motinha da Julya** | Mobilidade | Moto scooter rosa veloz (+3.0 vel) com ronco de motor contínuo e imunidade. | 7.0s (dura 2.8s) |
 | **Junior** | **Cocô Voador** | Meme / Ataque | Arremesso de cocô com som de peido e splat cartunesco no impacto! | 4.0s |
 | **Clarinha** | **Passinho Especial** | Ritmo / Distração | Manda uma dança ritmada que hipnotiza os inimigos e desintegra obstáculos próximos ao som de um funk 8-bit contagiante! | 12.0s (dura 3.0s) |
+| **Taynara** | **Raízes Vivas** | Natureza / Controle | Invoca raízes e cipós que brotam do solo em alta velocidade, aprisionando bandidos e desintegrando obstáculos com flores! | 8.0s (alcance 340px) |
+| **Matheus** | **Sumir (Invisível)** | Furtividade / Esquiva | Desaparece em nuvem de fumaça e vira silhueta translúcida espectral, atravessando obstáculos sem colisão! | 8.5s (dura 3.2s) |
+| **Emily** | **Hambúrguer Voador** | Ataque / Projétil | Arremessa hambúrguer artesanal gigante que perfura até 3 obstáculos em sequência antes de explodir em ingredientes! | 5.6s (3 Impactos) |
+| **Lais** | **Feitiço Prismático** | Magia Arcana | Rajada concentrada de raios místicos e runas cósmicas que limpa a pista à frente com +15 pts de bônus arcano! | 6.5s (alcance 380px) |
 
 ---
 
