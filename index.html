@@ -1608,7 +1608,8 @@
     vitor_sonic: `<svg viewBox="0 0 16 16" width="16" height="16" class="pixel-ico-svg"><path d="M5 2h6v2h2v2h2v5h-2v2h-3v2H6v-2H3v-2H1V8h2V5h2V2z" fill="#2563eb"/><path d="M1 8l4-3v2l4-2v2l4-2v3H9v2H6v1H1V8z" fill="#1d4ed8"/><path d="M7 6h3v3H7V6zm-3 2h2v2H4V8z" fill="#fde047"/><path d="M9 7h1v2H9V7z" fill="#000000"/><path d="M8 11h4v2H8v-2z" fill="#ef4444"/></svg>`,
     vitor_mario: `<svg viewBox="0 0 16 16" width="16" height="16" class="pixel-ico-svg"><path d="M5 1h6v2h3v5h-1v2H3V8H2V3h3V1z" fill="#ef4444"/><path d="M6 3h4v3H6V3zm-3 2h2v2H3V5zm10 0h2v2h-2V5z" fill="#ffffff"/><path d="M4 10h8v4H4v-4z" fill="#fef08a"/><path d="M5 11h2v2H5v-2zm4 0h2v2H9v-2z" fill="#000000"/></svg>`,
     julya_motorcycle: `<svg viewBox="0 0 16 16" width="16" height="16" class="pixel-ico-svg"><path d="M2 9h4v3H2V9zm8 0h4v3h-4V9z" fill="#1e293b"/><path d="M3 10h2v1H3v-1zm8 0h2v1h-2v-1z" fill="#f472b6"/><path d="M4 7h6v2H4V7zm5-4h3v3H9V3z" fill="#d946ef"/><path d="M12 4h3v2h-3V4z" fill="#fde047"/><path d="M1 8h3v1H1V8z" fill="#ef4444"/></svg>`,
-    flying_poop: `<svg viewBox="0 0 16 16" width="16" height="16" class="pixel-ico-svg"><path d="M7 1h2v2H7V1zm-2 2h3v2H5V3zm-2 3h8v2H3V6zm-1 3h11v3H2V9zm-1 3h13v3H1v-3z" fill="#854d0e"/><path d="M4 10h2v2H4v-2zm6 0h2v2h-2v-2z" fill="#ffffff"/><path d="M5 10h1v1H5v-1zm6 0h1v1h-1v-1z" fill="#000000"/><path d="M6 13h4v1H6v-1z" fill="#a16207"/></svg>`
+    flying_poop: `<svg viewBox="0 0 16 16" width="16" height="16" class="pixel-ico-svg"><path d="M7 1h2v2H7V1zm-2 2h3v2H5V3zm-2 3h8v2H3V6zm-1 3h11v3H2V9zm-1 3h13v3H1v-3z" fill="#854d0e"/><path d="M4 10h2v2H4v-2zm6 0h2v2h-2v-2z" fill="#ffffff"/><path d="M5 10h1v1H5v-1zm6 0h1v1h-1v-1z" fill="#000000"/><path d="M6 13h4v1H6v-1z" fill="#a16207"/></svg>`,
+    dance_step: `<svg viewBox="0 0 16 16" width="16" height="16" class="pixel-ico-svg"><path d="M4 1h5v2H6v3h3V5h2V3h2v7h-2v2h-1v2H8v-2H6v-2H4V8h2V6H4V1z" fill="#ec4899"/><path d="M7 3h2v2H7V3zm5 2h2v3h-2V5zm-4 6h3v2H8v-2z" fill="#ffd600"/><path d="M2 9h2v2H2V9zm1 3h2v2H3v-2z" fill="#00f0ff"/><path d="M12 1h3v3h-3V1z" fill="#a855f7"/></svg>`
   };
 
   function getAbilityIconSvg(skillId) {
@@ -1617,6 +1618,15 @@
 
   // TABELA CENTRALIZADA DE BALANCEAMENTO DAS HABILIDADES
   const ABILITY_CONFIG = {
+    clarinha: {
+      id: 'dance_step',
+      name: 'Passinho Especial',
+      type: 'Ritmo / Distração',
+      duration: 3.0,
+      cooldown: 12.0,
+      invulnerable: true,
+      desc: 'Clarinha manda um passinho ritmado que hipnotiza os inimigos e desintegra obstáculos próximos com música! (Duração: 3s | Recarga: 12s)'
+    },
     di5: {
       id: 'smoke_shield',
       name: 'Fumaça Blindada',
@@ -2470,6 +2480,59 @@
       });
     }
 
+    // 11. CLARINHA: Passinho Especial (Música chiptune dançante ritmada + arpejo alegre)
+    playClarinhaDance() {
+      if (!this.enabled) return;
+      this.init();
+      if (!this.ctx) return;
+      const now = this.ctx.currentTime;
+      // Melodia de passinho dançante alegre em 8-bit
+      const melody = [523.25, 659.25, 783.99, 1046.50, 880.00, 1046.50, 1174.66, 1318.51, 1046.50, 880.00, 783.99, 1046.50];
+      melody.forEach((freq, idx) => {
+        const osc = this.ctx.createOscillator();
+        const gain = this.createGain(0.12);
+        osc.type = (idx % 2 === 0) ? 'triangle' : 'square';
+        const t = now + idx * 0.11;
+        osc.frequency.setValueAtTime(freq, t);
+        gain.gain.setValueAtTime(0.12, t);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.14);
+        osc.connect(gain);
+        osc.start(t);
+        osc.stop(t + 0.15);
+      });
+      // Linha de baixo funk dançante
+      const bass = [130.81, 164.81, 196.00, 220.00, 174.61, 196.00];
+      bass.forEach((f, i) => {
+        const bOsc = this.ctx.createOscillator();
+        const bGain = this.createGain(0.14);
+        bOsc.type = 'sawtooth';
+        const bt = now + i * 0.22;
+        bOsc.frequency.setValueAtTime(f, bt);
+        bGain.gain.setValueAtTime(0.14, bt);
+        bGain.gain.exponentialRampToValueAtTime(0.001, bt + 0.20);
+        bOsc.connect(bGain);
+        bOsc.start(bt);
+        bOsc.stop(bt + 0.21);
+      });
+    }
+
+    playClarinhaBeatHit() {
+      if (!this.enabled) return;
+      this.init();
+      if (!this.ctx) return;
+      const now = this.ctx.currentTime;
+      const osc = this.ctx.createOscillator();
+      const gain = this.createGain(0.14);
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(1046.50, now);
+      osc.frequency.exponentialRampToValueAtTime(2093.00, now + 0.12);
+      gain.gain.setValueAtTime(0.14, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+      osc.connect(gain);
+      osc.start(now);
+      osc.stop(now + 0.12);
+    }
+
     // ------------------------------------------------------------------------
     // SONS GERAIS DE GAMEPLAY
     // ------------------------------------------------------------------------
@@ -2664,12 +2727,12 @@
       this.particles = [];
       this.maxParticles = maxParticles;
     }
-    emit(x, y, vx, vy, color, size, life, ax = 0, ay = 0, type = 'pixel') {
+    emit(x, y, vx, vy, color, size, life, ax = 0, ay = 0, type = 'pixel', symbol = null) {
       if (this.particles.length >= this.maxParticles) {
         this.particles.shift(); // Evita sobrecarga em dispositivos móveis
       }
       this.particles.push({
-        x, y, vx, vy, ax, ay, color, size, life, maxLife: life, type
+        x, y, vx, vy, ax, ay, color, size, life, maxLife: life, type, symbol
       });
     }
     emitRunDust(x, y, speed) {
@@ -2828,12 +2891,34 @@
         0, 0, 'speed_line'
       );
     }
+    emitMusicalNote(x, y) {
+      const symbols = ['♪', '♫', '♬'];
+      const colors = ['#ec4899', '#f43f5e', '#a855f7', '#ffd600', '#00f0ff'];
+      const sym = symbols[Math.floor(Math.random() * symbols.length)];
+      const col = colors[Math.floor(Math.random() * colors.length)];
+      this.emit(
+        x + (Math.random() - 0.5) * 16,
+        y,
+        (Math.random() - 0.5) * 2,
+        -(Math.random() * 2 + 1.2),
+        col,
+        1,
+        28,
+        0,
+        -0.02,
+        'musical_note',
+        sym
+      );
+    }
     draw(targetCtx) {
       for (let i = 0; i < this.particles.length; i++) {
         const p = this.particles[i];
         targetCtx.fillStyle = p.color;
         if (p.type === 'speed_line') {
           targetCtx.fillRect(Math.round(p.x), Math.round(p.y), p.size * 9, 2);
+        } else if (p.type === 'musical_note') {
+          targetCtx.font = 'bold 12px "Press Start 2P", monospace';
+          targetCtx.fillText(p.symbol || '♪', Math.round(p.x), Math.round(p.y));
         } else {
           targetCtx.fillRect(Math.round(p.x), Math.round(p.y), p.size, p.size);
         }
@@ -2977,6 +3062,19 @@
       accColor: '#84cc16',
       quotes: ['Não valeu, era teste!', 'Tava limpando a gordura do dedo!'],
       skillKey: 'junior'
+    },
+    {
+      id: 'clarinha',
+      name: 'Clarinha',
+      title: 'A Rainha do Passinho',
+      hairColor: '#b45309',
+      skinColor: '#fed7aa',
+      outfitColor: '#ec4899',
+      pantsColor: '#7c3aed',
+      accessory: 'dance_headset',
+      accColor: '#f43f5e',
+      quotes: ['Na batida do passinho ninguém me pega!', 'Errei a coreografia da corrida kkkk', 'Quem dança seus males espanta!', 'O ritmo desse jogo tá contagiante!'],
+      skillKey: 'clarinha'
     }
   ];
 
@@ -2997,6 +3095,13 @@
   }
 
   let friends = loadLocal('amigos_run_roster_v3', INITIAL_FRIENDS);
+  // Garante que novos amigos iniciais como Clarinha sejam integrados automaticamente
+  INITIAL_FRIENDS.forEach(initFriend => {
+    if (!friends.some(f => f.id === initFriend.id)) {
+      friends.push(initFriend);
+    }
+  });
+
   let selectedFriendIndex = 0;
   let scores = loadLocal('amigos_run_scores_v3', [
     { name: 'Di5', score: 450, date: '2026-10-16' },
@@ -3008,8 +3113,12 @@
   let characterStats = loadLocal('amigos_run_char_stats_v3', {
     di5: { bestScore: 450, matches: 5, obstaclesDestroyed: 12, skillsUsed: 8 },
     wendel: { bestScore: 380, matches: 4, obstaclesDestroyed: 10, skillsUsed: 6 },
-    muiz: { bestScore: 310, matches: 3, obstaclesDestroyed: 7, skillsUsed: 4 }
+    muiz: { bestScore: 310, matches: 3, obstaclesDestroyed: 7, skillsUsed: 4 },
+    clarinha: { bestScore: 0, matches: 0, obstaclesDestroyed: 0, skillsUsed: 0 }
   });
+  if (!characterStats.clarinha) {
+    characterStats.clarinha = { bestScore: 0, matches: 0, obstaclesDestroyed: 0, skillsUsed: 0 };
+  }
 
   // Estatísticas da Partida Atual
   let matchStats = {
@@ -3406,8 +3515,14 @@
         h: 16,
         rot: 0
       });
-      showToast('COCÔ VOADOR ARREMESSADO!');
       startSkillCooldown(config.cooldown);
+    } else if (config.id === 'dance_step') {
+      audio.playClarinhaDance();
+      skillState.isActive = true;
+      skillState.activeDuration = config.duration || 3.0;
+      skillState.isInvincible = true;
+      player.animState = 'DANCE';
+      showToast('PASSINHO DA CLARINHA! NO RITMO!');
     }
 
     updateSkillHud();
@@ -3502,11 +3617,14 @@
       shieldBadge.style.display = 'none';
     }
 
+    const isClarinha = getCurrentFriend().id === 'clarinha';
+
     if (skillState.isActive) {
-      skillHudStatus.textContent = `EM USO! (${skillState.activeDuration.toFixed(1)}s)`;
-      skillHudStatus.style.color = 'var(--accent-cyan)';
+      skillHudStatus.textContent = isClarinha ? `PASSINHO! (${skillState.activeDuration.toFixed(1)}s)` : `EM USO! (${skillState.activeDuration.toFixed(1)}s)`;
+      skillHudStatus.style.color = isClarinha ? '#ec4899' : 'var(--accent-cyan)';
       skillHudProgress.style.width = '100%';
-      touchSkillLabel.innerHTML = `<span class="pixel-btn-icon">${PIXEL_ICONS.bolt}</span> ATIVADA`;
+      const skillIco = isClarinha ? PIXEL_ICONS.dance_step : PIXEL_ICONS.bolt;
+      touchSkillLabel.innerHTML = `<span class="pixel-btn-icon">${skillIco}</span> ${isClarinha ? 'PASSINHO!' : 'ATIVADA'}`;
       touchSkillBtn.classList.remove('ready');
     } else if (skillState.cooldownRemaining > 0) {
       const totalCd = config.cooldown || 1;
@@ -3514,13 +3632,15 @@
       skillHudStatus.textContent = `RECARGA: ${skillState.cooldownRemaining.toFixed(1)}s`;
       skillHudStatus.style.color = 'var(--text-muted)';
       skillHudProgress.style.width = `${pct}%`;
-      touchSkillLabel.innerHTML = `<span class="pixel-btn-icon">${PIXEL_ICONS.bolt}</span> ${skillState.cooldownRemaining.toFixed(1)}s`;
+      const skillIco = isClarinha ? PIXEL_ICONS.dance_step : PIXEL_ICONS.bolt;
+      touchSkillLabel.innerHTML = `<span class="pixel-btn-icon">${skillIco}</span> ${skillState.cooldownRemaining.toFixed(1)}s`;
       touchSkillBtn.classList.remove('ready');
     } else {
       skillHudStatus.textContent = 'PRONTA [X]';
       skillHudStatus.style.color = 'var(--accent-green)';
       skillHudProgress.style.width = '100%';
-      touchSkillLabel.innerHTML = `<span class="pixel-btn-icon">${PIXEL_ICONS.bolt}</span> USAR SKILL [X]`;
+      const skillIco = isClarinha ? PIXEL_ICONS.dance_step : PIXEL_ICONS.bolt;
+      touchSkillLabel.innerHTML = `<span class="pixel-btn-icon">${skillIco}</span> ${isClarinha ? 'DANÇAR [X]' : 'USAR SKILL [X]'}`;
       touchSkillBtn.classList.add('ready');
     }
   }
@@ -3599,6 +3719,12 @@
     // 3. TRANSFORMAÇÃO: VITOR NO MODO SONIC
     if (skillState.isActive && friend.id === 'vitor' && friend.vitorVariant === 'vitor_sonic') {
       renderSonicBall(targetCtx, x, y, frameNum);
+      return;
+    }
+
+    // 4. DANÇA: CLARINHA NO PASSINHO ESPECIAL
+    if (skillState.isActive && friend.id === 'clarinha') {
+      renderClarinhaDance(targetCtx, x, y, friend, frameNum);
       return;
     }
 
@@ -4130,6 +4256,124 @@
       drawPixelRect(targetCtx, x + 22, y - 4, 3, 2, '#fff');
     } else if (acc === 'sweatband' && !isDucking) {
       drawPixelRect(targetCtx, x + 6, y + 3, 19, 2, color);
+    } else if (acc === 'dance_headset' && !isDucking) {
+      // Tiara / Headset gamer musical estiloso
+      drawPixelRect(targetCtx, x + 7, y - 2, 18, 3, '#1e1b4b');
+      drawPixelRect(targetCtx, x + 10, y - 3, 12, 2, color);
+      drawPixelRect(targetCtx, x + 5, y + 2, 4, 7, color);
+      drawPixelRect(targetCtx, x + 22, y + 2, 4, 7, color);
+      drawPixelRect(targetCtx, x + 23, y + 4, 2, 3, '#ffd600');
+    }
+  }
+
+  function renderClarinhaDance(targetCtx, x, y, friend, frameNum) {
+    const skin = friend.skinColor || '#fed7aa';
+    const outfit = friend.outfitColor || '#ec4899';
+    const outfitShadow = '#be185d';
+    const hair = friend.hairColor || '#b45309';
+    const pants = friend.pantsColor || '#7c3aed';
+    const outline = '#0a0814';
+
+    // Batida rítmica da dança
+    const danceStep = Math.floor(frameNum / 4) % 4;
+    const bounce = Math.abs(Math.sin(frameNum * 0.45)) * 3.5;
+    const drawY = Math.round(y - bounce);
+
+    // Disco Spotlight / Pista iluminada sob os pés
+    const haloW = Math.round(44 + Math.sin(frameNum * 0.3) * 6);
+    drawPixelRect(targetCtx, x + 16 - haloW / 2, GROUND_Y + 1, haloW, 4, 'rgba(236, 72, 153, 0.35)');
+    const rotLight = frameNum * 0.18;
+    drawPixelRect(targetCtx, x + 16 + Math.cos(rotLight) * 18, GROUND_Y + 1, 3, 3, '#ffd600');
+    drawPixelRect(targetCtx, x + 16 - Math.cos(rotLight) * 18, GROUND_Y + 1, 3, 3, '#00f0ff');
+    drawPixelRect(targetCtx, x + 16 + Math.sin(rotLight) * 14, GROUND_Y + 1, 3, 3, '#ec4899');
+
+    // 1. Pernas do Passinho
+    if (danceStep === 0) {
+      // Perna direita esticada à frente no passinho, esquerda de apoio
+      drawPixelRect(targetCtx, x + 6, drawY + 28, 7, 12, pants);
+      drawPixelRect(targetCtx, x + 5, drawY + 38, 9, 5, '#f43f5e');
+      drawPixelRect(targetCtx, x + 18, drawY + 26, 12, 8, pants);
+      drawPixelRect(targetCtx, x + 26, drawY + 31, 9, 5, '#f43f5e');
+    } else if (danceStep === 1) {
+      // Agachamento rítmico (Squat groove)
+      drawPixelRect(targetCtx, x + 3, drawY + 29, 9, 10, pants);
+      drawPixelRect(targetCtx, x + 1, drawY + 37, 11, 5, '#f43f5e');
+      drawPixelRect(targetCtx, x + 20, drawY + 29, 9, 10, pants);
+      drawPixelRect(targetCtx, x + 20, drawY + 37, 11, 5, '#f43f5e');
+    } else if (danceStep === 2) {
+      // Perna esquerda esticada, direita de apoio cruzada
+      drawPixelRect(targetCtx, x + 19, drawY + 28, 7, 12, pants);
+      drawPixelRect(targetCtx, x + 18, drawY + 38, 9, 5, '#f43f5e');
+      drawPixelRect(targetCtx, x + 4, drawY + 26, 12, 8, pants);
+      drawPixelRect(targetCtx, x + 1, drawY + 31, 9, 5, '#f43f5e');
+    } else {
+      // Salto no ar / giro com pés juntos
+      drawPixelRect(targetCtx, x + 10, drawY + 28, 6, 11, pants);
+      drawPixelRect(targetCtx, x + 9, drawY + 37, 8, 5, '#f43f5e');
+      drawPixelRect(targetCtx, x + 16, drawY + 28, 6, 11, pants);
+      drawPixelRect(targetCtx, x + 15, drawY + 37, 8, 5, '#f43f5e');
+    }
+
+    // 2. Tronco e Cropped com brilho
+    drawPixelRect(targetCtx, x + 5, drawY + 13, 22, 17, outline);
+    drawPixelRect(targetCtx, x + 7, drawY + 14, 18, 14, outfit);
+    drawPixelRect(targetCtx, x + 7, drawY + 23, 18, 5, outfitShadow);
+    drawPixelRect(targetCtx, x + 13, drawY + 17, 6, 4, '#fde047'); // Estrela brilhante no peito
+
+    // 3. Braços do Passinho
+    if (danceStep === 0) {
+      // Braço esquerdo apontando para cima (pose disco clássica!)
+      drawPixelRect(targetCtx, x - 2, drawY + 3, 6, 15, outline);
+      drawPixelRect(targetCtx, x - 1, drawY + 4, 4, 13, outfit);
+      drawPixelRect(targetCtx, x - 2, drawY + 1, 5, 4, skin);
+      drawPixelRect(targetCtx, x + 25, drawY + 17, 6, 9, outline);
+      drawPixelRect(targetCtx, x + 26, drawY + 18, 4, 7, outfit);
+    } else if (danceStep === 1) {
+      // Ambos os braços abertos para os lados
+      drawPixelRect(targetCtx, x - 5, drawY + 14, 11, 6, outline);
+      drawPixelRect(targetCtx, x - 4, drawY + 15, 9, 4, outfit);
+      drawPixelRect(targetCtx, x - 6, drawY + 15, 3, 4, skin);
+      drawPixelRect(targetCtx, x + 26, drawY + 14, 11, 6, outline);
+      drawPixelRect(targetCtx, x + 27, drawY + 15, 9, 4, outfit);
+      drawPixelRect(targetCtx, x + 35, drawY + 15, 3, 4, skin);
+    } else if (danceStep === 2) {
+      // Braço direito apontando para o alto
+      drawPixelRect(targetCtx, x + 1, drawY + 17, 6, 9, outline);
+      drawPixelRect(targetCtx, x + 2, drawY + 18, 4, 7, outfit);
+      drawPixelRect(targetCtx, x + 27, drawY + 3, 6, 15, outline);
+      drawPixelRect(targetCtx, x + 28, drawY + 4, 4, 13, outfit);
+      drawPixelRect(targetCtx, x + 28, drawY + 1, 5, 4, skin);
+    } else {
+      // Braços flexionados para cima em pose musical
+      drawPixelRect(targetCtx, x, drawY + 6, 6, 12, outline);
+      drawPixelRect(targetCtx, x + 1, drawY + 7, 4, 10, outfit);
+      drawPixelRect(targetCtx, x, drawY + 4, 5, 4, skin);
+      drawPixelRect(targetCtx, x + 26, drawY + 6, 6, 12, outline);
+      drawPixelRect(targetCtx, x + 27, drawY + 7, 4, 10, outfit);
+      drawPixelRect(targetCtx, x + 27, drawY + 4, 5, 4, skin);
+    }
+
+    // 4. Cabeça e Expressão Sorridente
+    drawPixelRect(targetCtx, x + 5, drawY + 1, 22, 14, outline);
+    drawPixelRect(targetCtx, x + 7, drawY + 3, 18, 11, skin);
+    // Cabelo volumoso ondulando com o ritmo
+    const hairShift = (danceStep % 2 === 0) ? -2 : 2;
+    drawPixelRect(targetCtx, x + 4 + hairShift, drawY, 24, 6, hair);
+    drawPixelRect(targetCtx, x + 3 + hairShift, drawY + 4, 6, 10, hair);
+    drawPixelRect(targetCtx, x + 24 + hairShift, drawY + 4, 5, 8, hair);
+
+    // Olhos e Sorriso animado
+    drawPixelRect(targetCtx, x + 18, drawY + 6, 3, 4, outline);
+    drawPixelRect(targetCtx, x + 19, drawY + 6, 2, 2, '#fff');
+    drawPixelRect(targetCtx, x + 18, drawY + 11, 5, 2, '#ec4899'); // Batom pink
+
+    // Acessório: Headset / Tiara
+    renderAccessory(targetCtx, friend, x, drawY, false);
+
+    // Mini estrela de brilho pixelada ao lado da cabeça
+    if (Math.sin(frameNum * 0.4) > 0) {
+      drawPixelRect(targetCtx, x + 30, drawY - 2, 3, 1, '#ffd600');
+      drawPixelRect(targetCtx, x + 31, drawY - 3, 1, 3, '#ffd600');
     }
   }
 
@@ -4997,6 +5241,16 @@
       drawPixelRect(ctx, ox + 25, oy + 4, 2, 1, '#00f0ff');
       drawPixelRect(ctx, ox, oy + 8, 8, 5, '#334155');
     }
+
+    // Efeito de Distração / Hipnose do Passinho da Clarinha
+    if (o.isDistracted) {
+      const bounce = Math.sin(frameCount * 0.35) * 3;
+      ctx.fillStyle = '#ffd600';
+      ctx.font = 'bold 12px "Press Start 2P", monospace';
+      ctx.fillText('♪', ox + o.w / 2 - 8, oy - 6 + bounce);
+      ctx.fillStyle = '#ec4899';
+      ctx.fillText('♫', ox + o.w / 2 + 4, oy - 10 - bounce);
+    }
   }
 
   /**
@@ -5141,6 +5395,11 @@
     );
 
     if (!hasOverlap) return false;
+
+    // Se o inimigo estiver distraído/hipnotizado pelo passinho da Clarinha:
+    if (o.isDistracted) {
+      return false; // Jogador passa por ele em segurança sem colisão!
+    }
 
     // Colisão real detectada!
     // Se o jogador estiver invulnerável (como no Kart do Joao ou Motinha da Julya):
@@ -5498,6 +5757,43 @@
       updateSkillHud();
     }
 
+    // Clarinha: Efeitos rítmicos do Passinho Especial (Partículas, distração de inimigos e remoção de obstáculos)
+    if (skillState.isActive && getCurrentFriend().id === 'clarinha') {
+      if (Math.random() > 0.4) {
+        particles.emitMusicalNote(player.x + 12 + (Math.random() - 0.5) * 26, player.y - 12 + Math.random() * 24);
+      }
+      if (Math.random() > 0.45) {
+        const danceColors = ['#ec4899', '#f43f5e', '#a855f7', '#ffd600', '#00f0ff'];
+        particles.emit(
+          player.x + Math.random() * 30,
+          player.y + Math.random() * 34,
+          (Math.random() - 0.5) * 3,
+          -(Math.random() * 2 + 1),
+          danceColors[Math.floor(Math.random() * danceColors.length)],
+          2,
+          16
+        );
+      }
+
+      // Área de ritmo: hipnotiza inimigos e dissolve obstáculos comuns à frente
+      obstacles.forEach(obs => {
+        if (!obs.destroyed && obs.x >= player.x - 20 && obs.x <= player.x + 220) {
+          if (obs.type === 'bandit_running' || obs.type === 'police_car_patrol' || obs.type === 'bandit' || obs.type === 'police_car') {
+            if (!obs.isDistracted) {
+              obs.isDistracted = true;
+              obs.distractedTimer = 3.5;
+              matchStats.obstaclesPassed++;
+              particles.emitMusicalNote(obs.x + obs.w / 2, obs.y - 10);
+            }
+          } else {
+            destroyObstacleWithEffect(obs, '#ec4899');
+            particles.emitMusicalNote(obs.x + obs.w / 2, obs.y);
+            audio.playClarinhaBeatHit();
+          }
+        }
+      });
+    }
+
     // Di5: Preparação da Fumaça Blindada (tragar antes de formar o escudo)
     if (skillState.di5Preparing) {
       skillState.di5PrepTimer -= dtSeconds;
@@ -5608,6 +5904,11 @@
     obstacles.forEach(o => {
       const extraSpeed = o.airSpeed ? (gameSpeed * o.airSpeed) : (gameSpeed + (o.patrolSpeed || 0));
       o.x -= (extraSpeed + speedBonus) * dt;
+
+      if (o.distractedTimer > 0) {
+        o.distractedTimer -= dtSeconds;
+        if (o.distractedTimer <= 0) o.isDistracted = false;
+      }
 
       if (!o.passed && o.x + o.w < player.x) {
         o.passed = true;

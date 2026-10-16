@@ -121,6 +121,7 @@ O jogo possui agora um sistema progressivo e equilibrado de 5 níveis de dificul
 | **Vitor (Mario)** | **Modo Mario** | Arcade | Salto reforçado gigante com arpejo de power-up retrô 8-bit. | 7.5s (dura 3.2s) |
 | **Julya** | **Motinha da Julya** | Mobilidade | Moto scooter rosa veloz (+3.0 vel) com ronco de motor contínuo e imunidade. | 7.0s (dura 2.8s) |
 | **Junior** | **Cocô Voador** | Meme / Ataque | Arremesso de cocô com som de peido e splat cartunesco no impacto! | 4.0s |
+| **Clarinha** | **Passinho Especial** | Ritmo / Distração | Manda uma dança ritmada que hipnotiza os inimigos e desintegra obstáculos próximos ao som de um funk 8-bit contagiante! | 12.0s (dura 3.0s) |
 
 ---
 
