@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#0e0c18">
-<meta name="description" content="AMIGOS RUN V0.3 — Jogo de corrida retrô pixel art com animações por estado, partículas, habilidades balanceadas e sistema de pausa!">
-<title>AMIGOS RUN V0.3 — Edição Avançada (Pixel Runner)</title>
+<meta name="description" content="A GRANDE FAMÍLIA GAME — Jogo de corrida retrô pixel art com ranking global online em tempo real!">
+<title>A GRANDE FAMÍLIA GAME — Edição Pixel Art Retrô</title>
 
 <!-- Fontes Retrô Pixel Art -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1430,12 +1430,12 @@
   <!-- Cabeçalho Retrô com Status Online, Perfil de Jogador, Pausa e Som -->
   <header>
     <div class="logo-box">
-      <div class="logo-badge">V0.3 ADVANCED</div>
-      <div class="brand-title">AMIGOS <span>RUN</span></div>
+      <div class="logo-badge">RETRO ARCADE</div>
+      <div class="brand-title">A GRANDE <span>FAMÍLIA</span> <span style="font-size:0.65em;color:var(--accent-cyan);vertical-align:middle;">GAME</span></div>
     </div>
     <div class="header-actions">
       <!-- Indicador Real de Jogadores Conectados -->
-      <div class="online-counter-badge" id="onlineCounterBadge" title="Jogadores conectados no AMIGOS RUN agora">
+      <div class="online-counter-badge" id="onlineCounterBadge" title="Jogadores conectados no A GRANDE FAMÍLIA GAME agora">
         <span class="online-dot"></span> <span id="onlineCountText">1 ONLINE</span>
       </div>
 
@@ -1469,7 +1469,7 @@
   <div class="game-cabinet">
     <div class="crt-scanlines"></div>
     
-    <canvas id="gameCanvas" width="960" height="320" aria-label="Jogo de corrida Amigos Run"></canvas>
+    <canvas id="gameCanvas" width="960" height="320" aria-label="Jogo de corrida A GRANDE FAMÍLIA GAME"></canvas>
     
     <!-- HUD Superior da Partida com Widget da Skill Integrado (Totalmente Fora da Pista) -->
     <div class="arcade-hud">
@@ -1716,14 +1716,14 @@
   </div>
 
   <footer>
-    AMIGOS RUN V0.3 · SERVIDOR COMPARTILHADO + PARTIDAS INDIVIDUAIS + RANKING GLOBAL EM TEMPO REAL
+    A GRANDE FAMÍLIA GAME · SERVIDOR COMPARTILHADO + PARTIDAS INDIVIDUAIS + RANKING GLOBAL EM TEMPO REAL
   </footer>
 
 </div>
 
 <script>
 /**
- * AMIGOS RUN V0.3 — MOTOR DE JOGO AVANÇADO
+ * A GRANDE FAMÍLIA GAME — MOTOR DE JOGO AVANÇADO
  * Animações por Máquina de Estados, ParticleManager, ABILITY_CONFIG, Novos Obstáculos e Pausa Real.
  */
 (() => {
@@ -4830,13 +4830,16 @@
     const storedSecret = localStorage.getItem('amigos_run_player_secret') || '';
     const storedNick = nicknameOverride || localStorage.getItem('amigos_run_player_nickname') || `Corredor_${Math.floor(100 + Math.random() * 900)}`;
 
+    const validStoredId = (storedId && !storedId.startsWith('local_')) ? storedId : undefined;
+    const validStoredSecret = (storedSecret && !storedSecret.startsWith('local_')) ? storedSecret : undefined;
+
     try {
       const res = await fetch('/api/player/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          playerId: storedId || undefined,
-          playerSecret: storedSecret || undefined,
+          playerId: validStoredId,
+          playerSecret: validStoredSecret,
           nickname: storedNick,
           favoriteChar: getCurrentFriend() ? getCurrentFriend().id : 'di5'
         })
@@ -4860,9 +4863,9 @@
       }
     } catch (err) {
       console.warn('[Online] Servidor indisponível no momento, usando modo local:', err);
-      if (!playerProfile.playerId) {
-        playerProfile.playerId = storedId || 'local_' + Date.now();
-        playerProfile.playerSecret = storedSecret || 'local_secret';
+      if (!playerProfile.playerId || playerProfile.playerId.startsWith('local_')) {
+        playerProfile.playerId = validStoredId || 'local_' + Date.now();
+        playerProfile.playerSecret = validStoredSecret || 'local_secret';
         playerProfile.nickname = storedNick;
         updatePlayerProfileUi();
       }
@@ -4982,12 +4985,28 @@
     if (!globalLeaderboardList) return;
     globalLeaderboardList.innerHTML = '';
 
-    if (!globalLeaderboardData || !globalLeaderboardData.length) {
-      globalLeaderboardList.innerHTML = '<li class="empty-leaderboard">Carregando o ranking global online... Seja o primeiro campeão!</li>';
-      return;
+    // Se ainda não recebeu do servidor, renderiza os recordes locais de fallback
+    let listToRender = globalLeaderboardData;
+    let isFallback = false;
+    if (!listToRender || !listToRender.length) {
+      isFallback = true;
+      listToRender = (scores && scores.length) ? scores.map((s, idx) => ({
+        rank: idx + 1,
+        nickname: s.name,
+        characterId: (s.name || '').toLowerCase(),
+        score: s.score,
+        maxLevel: getLevelForScore(s.score).level,
+        date: s.date || 'Hoje'
+      })) : [
+        { rank: 1, nickname: 'Di5', characterId: 'di5', score: 450, maxLevel: 2, date: '16/10/2026' },
+        { rank: 2, nickname: 'Wendel', characterId: 'wendel', score: 380, maxLevel: 2, date: '16/10/2026' },
+        { rank: 3, nickname: 'Muniz', characterId: 'muniz', score: 310, maxLevel: 2, date: '16/10/2026' },
+        { rank: 4, nickname: 'Clarinha', characterId: 'clarinha', score: 290, maxLevel: 1, date: '16/10/2026' },
+        { rank: 5, nickname: 'Joao', characterId: 'joao', score: 260, maxLevel: 1, date: '16/10/2026' }
+      ];
     }
 
-    globalLeaderboardData.forEach((item, index) => {
+    listToRender.forEach((item, index) => {
       const li = document.createElement('li');
       const isMe = playerProfile.playerId && item.playerId === playerProfile.playerId;
       li.className = `leader-item ${isMe ? 'is-me' : ''}`;
@@ -5142,8 +5161,15 @@
   if (nicknameSaveBtn) nicknameSaveBtn.onclick = saveNickname;
   if (nicknameModalInput) {
     nicknameModalInput.addEventListener('keydown', (e) => {
+      e.stopPropagation();
       if (e.key === 'Enter') saveNickname();
       if (e.key === 'Escape') closeNicknameModal();
+    });
+    nicknameModalInput.addEventListener('keyup', (e) => {
+      e.stopPropagation();
+    });
+    nicknameModalInput.addEventListener('keypress', (e) => {
+      e.stopPropagation();
     });
   }
 
@@ -6534,6 +6560,15 @@
    * CONTROLES & EVENTOS
    */
   window.addEventListener('keydown', (e) => {
+    // Se o usuário estiver digitando em campo de texto, não interceptar as teclas do jogo (S, X, W, E, Espaço, etc.)
+    const targetTag = e.target ? (e.target.tagName || '').toUpperCase() : '';
+    if (targetTag === 'INPUT' || targetTag === 'TEXTAREA' || (e.target && e.target.isContentEditable)) {
+      if (e.code === 'Escape') {
+        closeNicknameModal();
+      }
+      return;
+    }
+
     if (e.code === 'Escape') {
       e.preventDefault();
       togglePause();
@@ -6555,6 +6590,11 @@
   });
 
   window.addEventListener('keyup', (e) => {
+    const targetTag = e.target ? (e.target.tagName || '').toUpperCase() : '';
+    if (targetTag === 'INPUT' || targetTag === 'TEXTAREA' || (e.target && e.target.isContentEditable)) {
+      return;
+    }
+
     if (['ArrowDown', 'KeyS'].includes(e.code)) {
       e.preventDefault();
       setDucking(false);

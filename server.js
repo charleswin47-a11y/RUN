@@ -197,8 +197,8 @@ app.post('/api/player/register', (req, res) => {
   let finalSecret = playerSecret;
   let cleanNick = sanitizeNickname(nickname);
 
-  // Se já enviou credenciais válidas, valida a autenticidade
-  if (finalPlayerId && players[finalPlayerId]) {
+  // Se já enviou credenciais válidas e não é ID temporário local, valida a autenticidade
+  if (finalPlayerId && !finalPlayerId.startsWith('local_') && players[finalPlayerId]) {
     const existing = players[finalPlayerId];
     if (existing.secret !== finalSecret) {
       return res.status(403).json({ error: 'Credenciais inválidas para este identificador.' });
@@ -449,7 +449,7 @@ app.use((req, res) => {
 // Inicia servidor HTTP + WebSocket
 server.listen(PORT, '0.0.0.0', () => {
   console.log(`====================================================`);
-  console.log(`🎮 AMIGOS RUN — SERVIDOR ONLINE & RANKING GLOBAL 🎮`);
+  console.log(`🎮 A GRANDE FAMÍLIA GAME — SERVIDOR ONLINE & RANKING 🎮`);
   console.log(`Porta: ${PORT}`);
   console.log(`Ambiente: ${process.env.NODE_ENV || 'production'}`);
   console.log(`Banco: ${LEADERBOARD_FILE}`);

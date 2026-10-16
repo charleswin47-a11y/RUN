@@ -1,7 +1,7 @@
 {
-  "name": "amigos-run",
+  "name": "a-grande-familia-game",
   "version": "1.0.0",
-  "description": "Jogo de corrida retrô em **Pixel Art**, inspirado no clássico dinossauro do Google, com elenco dos amigos, **máquina de estados de animação**, sistema de partículas dedicado, tabela de habilidades balanceada, novos obstáculos urbanos e **sistema de pausa real**.",
+  "description": "A GRANDE FAMÍLIA GAME — Jogo de corrida retrô em Pixel Art com ranking online global em tempo real!",
   "main": "index.js",
   "scripts": {
     "start": "node server.js",

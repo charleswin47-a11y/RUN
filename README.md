@@ -1,6 +1,6 @@
-# 🏃 AMIGOS RUN V0.3 — ANIMAÇÕES, PARTÍCULAS, BALANCEAMENTO E UX
+# 🏃 A GRANDE FAMÍLIA GAME — ANIMAÇÕES, PARTÍCULAS, RANKING GLOBAL E UX
 
-Jogo de corrida retrô em **Pixel Art**, inspirado no clássico dinossauro do Google, com elenco dos amigos, **máquina de estados de animação**, sistema de partículas dedicado, tabela de habilidades balanceada, novos obstáculos urbanos e **sistema de pausa real**.
+Jogo de corrida retrô em **Pixel Art**, com a turma de **A GRANDE FAMÍLIA GAME**, **máquina de estados de animação**, sistema de partículas dedicado, tabela de habilidades balanceada, novos obstáculos urbanos, ranking global online em tempo real e **sistema de pausa real**.
 
 ---
 
