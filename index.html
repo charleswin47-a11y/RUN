@@ -1654,13 +1654,6 @@
       </div>
       
       <div class="friends-carousel" id="friendsContainer"></div>
-
-      <div class="add-friend-row">
-        <input type="text" class="input-retro" id="addFriendInput" placeholder="Nome ou apelido novo..." maxlength="16">
-        <button class="btn-arcade" id="addFriendSubmitBtn" style="padding:8px 12px;font-size:9px;">
-          <span>+</span> ADICIONAR
-        </button>
-      </div>
     </div>
 
     <!-- Painel 2: Ranking Global Online & Recordes da Galera -->
@@ -1943,8 +1936,6 @@
   const nextFriendOverlayBtn = document.getElementById('nextFriendOverlayBtn');
   const friendsContainer = document.getElementById('friendsContainer');
   const leaderboardList = document.getElementById('leaderboardList');
-  const addFriendInput = document.getElementById('addFriendInput');
-  const addFriendSubmitBtn = document.getElementById('addFriendSubmitBtn');
   const resetLeaderboardBtn = document.getElementById('resetLeaderboardBtn');
   const touchJumpBtn = document.getElementById('touchJumpBtn');
   const touchDuckBtn = document.getElementById('touchDuckBtn');
@@ -3301,7 +3292,8 @@
   }
 
   let friends = loadLocal('amigos_run_roster_v3', INITIAL_FRIENDS);
-  // Garante a migração de Muiz para Muniz se houver no localStorage
+  // Garante apenas os 10 personagens oficiais do elenco
+  friends = friends.filter(f => INITIAL_FRIENDS.some(init => init.id === f.id || f.id === 'muiz'));
   friends.forEach(f => {
     if (f.id === 'muiz' || f.name === 'Muiz') {
       f.id = 'muniz';
@@ -3309,14 +3301,12 @@
       f.skillKey = 'muniz';
     }
   });
-  saveLocal('amigos_run_roster_v3', friends);
-
-  // Garante que novos amigos iniciais como Clarinha e Muniz sejam integrados automaticamente
   INITIAL_FRIENDS.forEach(initFriend => {
     if (!friends.some(f => f.id === initFriend.id)) {
       friends.push(initFriend);
     }
   });
+  saveLocal('amigos_run_roster_v3', friends);
 
   let selectedFriendIndex = 0;
   let scores = loadLocal('amigos_run_scores_v3', [
@@ -5166,42 +5156,6 @@
     };
   }
 
-  function handleAddNewFriend() {
-    const name = addFriendInput.value.trim();
-    if (!name) return;
-    if (friends.some(f => f.name.toLowerCase() === name.toLowerCase())) {
-      alert('Esse amigo já está cadastrado no elenco!');
-      return;
-    }
-
-    const palettes = [
-      { hair: '#18181b', skin: '#ffd8be', outfit: '#06b6d4', pants: '#1e293b', acc: 'sunglasses', sKey: 'wendel' },
-      { hair: '#b45309', skin: '#fed7aa', outfit: '#ec4899', pants: '#312e81', acc: 'headband', sKey: 'junior' }
-    ];
-    const p = palettes[friends.length % palettes.length];
-
-    const newFriend = {
-      id: 'friend_' + Date.now(),
-      name: name,
-      title: 'Desafiante da Turma',
-      hairColor: p.hair,
-      skinColor: p.skin,
-      outfitColor: p.outfit,
-      pantsColor: p.pants,
-      accessory: p.acc,
-      accColor: '#facc15',
-      quotes: ['Cheguei pra tomar a coroa!', 'Nem vi o que aconteceu!'],
-      skillKey: p.sKey
-    };
-
-    friends.push(newFriend);
-    selectedFriendIndex = friends.length - 1;
-    saveLocal('amigos_run_roster_v3', friends);
-    addFriendInput.value = '';
-    onFriendSelected();
-    showToast(`${name.toUpperCase()} ENTROU NO JOGO!`);
-  }
-
   /**
    * CENÁRIO RETRÔ PARALLAX MULTINÍVEL (DIA / PÔR DO SOL SYNTHWAVE / NOITE CYBERPUNK)
    */
@@ -6771,9 +6725,6 @@
       audio.playMilestone();
     };
   }
-
-  addFriendSubmitBtn.onclick = handleAddNewFriend;
-  addFriendInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') handleAddNewFriend(); });
 
   resetLeaderboardBtn.onclick = () => {
     if (confirm('Deseja zerar os recordes da galera neste navegador?')) {
