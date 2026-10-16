@@ -79,5 +79,23 @@
     "maxLevel": 1,
     "date": "16/10/2026",
     "timestamp": 1729090200000
+  },
+  {
+    "playerId": "37aaa12a-306d-4dee-80cf-79d3d090dd0c",
+    "nickname": "dw",
+    "characterId": "di5",
+    "score": 60,
+    "maxLevel": 1,
+    "date": "16/10/2026",
+    "timestamp": 1792193612917
+  },
+  {
+    "playerId": "2e4882b8-79a1-4235-a71d-17949ff439f3",
+    "nickname": "Jogador Alfa",
+    "characterId": "di5",
+    "score": 45,
+    "maxLevel": 1,
+    "date": "16/10/2026",
+    "timestamp": 1792194392322
   }
 ]

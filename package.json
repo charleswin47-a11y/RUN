@@ -22,6 +22,7 @@
   "homepage": "https://github.com/charleswin47-a11y/RUN#readme",
   "dependencies": {
     "express": "^5.3.0",
+    "pg": "^8.23.1",
     "ws": "^8.22.0"
   }
 }

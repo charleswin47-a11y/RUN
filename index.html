@@ -238,6 +238,29 @@
     background: #10b981;
     box-shadow: 0 0 6px #10b981;
     animation: dotPulse 2s infinite ease-in-out;
+    display: inline-block;
+    flex-shrink: 0;
+  }
+  .live-dot.connected {
+    background: #10b981;
+    box-shadow: 0 0 6px #10b981;
+    animation: dotPulse 2s infinite ease-in-out;
+  }
+  .live-dot.connecting {
+    background: #facc15;
+    box-shadow: 0 0 6px #facc15;
+    animation: dotPulse 1.2s infinite ease-in-out;
+  }
+  .live-dot.reconnecting {
+    background: #f97316;
+    box-shadow: 0 0 6px #f97316;
+    animation: dotPulse 0.9s infinite ease-in-out;
+  }
+  .live-dot.disconnected {
+    background: #ef4444;
+    box-shadow: 0 0 4px #ef4444;
+    animation: none;
+    opacity: 0.85;
   }
   @keyframes dotPulse {
     0%, 100% { opacity: 1; transform: scale(1); }
@@ -1283,6 +1306,29 @@
     padding: 24px 8px;
   }
 
+  .leader-state-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 22px 14px;
+    background: #141022;
+    border: 1px dashed #3f3560;
+    border-radius: 8px;
+    text-align: center;
+    box-sizing: border-box;
+    min-height: 110px;
+  }
+  .leader-state-item .state-icon {
+    font-size: 24px;
+    margin-bottom: 8px;
+    display: inline-block;
+  }
+  .retry-action-btn:hover {
+    filter: brightness(1.2);
+    transform: scale(1.03);
+  }
+
   /* Ranking Tabs & Recordes por Personagem */
   .ranking-tabs {
     display: flex;
@@ -1722,9 +1768,9 @@
     <!-- 2. No Centro: Indicador Online, Botão Corredor e Botão Ranking -->
     <div class="topbar-section topbar-center">
       <!-- Indicador Real de Jogadores Conectados -->
-      <div class="topbar-indicator online-indicator" id="onlineCounterBadge" title="Jogadores conectados em tempo real">
-        <span class="live-dot" aria-hidden="true"></span>
-        <span id="onlineCountText">1 ONLINE</span>
+      <div class="topbar-indicator online-indicator" id="onlineCounterBadge" title="Status dos jogadores conectados em tempo real">
+        <span class="live-dot connecting" id="liveDotIndicator" aria-hidden="true"></span>
+        <span id="onlineCountText">CONECTANDO...</span>
       </div>
 
       <!-- Botão Corredor (Perfil / Apelido) -->
@@ -2367,6 +2413,7 @@
   const globalLeaderboardList = document.getElementById('globalLeaderboardList');
   const onlineCounterBadge = document.getElementById('onlineCounterBadge');
   const onlineCountText = document.getElementById('onlineCountText');
+  const liveDotIndicator = document.getElementById('liveDotIndicator');
   const playerProfileBtn = document.getElementById('playerProfileBtn');
   const headerPlayerNick = document.getElementById('headerPlayerNick');
   const headerGlobalRankBtn = document.getElementById('headerGlobalRankBtn');
@@ -5748,38 +5795,64 @@
   // --------------------------------------------------------------------------
   // SISTEMA ONLINE, RANKING GLOBAL COMPARTILHADO & REAL-TIME WEBSOCKET
   // --------------------------------------------------------------------------
-  function getEffectiveServerHost() {
+  function escapeHtml(str) {
+    if (!str) return '';
+    return String(str).replace(/[&<>"']/g, s => ({
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#39;'
+    }[s]));
+  }
+
+  function getEffectiveServerOrigin() {
     const custom = (localStorage.getItem('amigos_run_custom_server_url') || '').trim();
-    if (custom) return custom.replace(/\/+$/, '');
-    if (window.location.protocol === 'file:' || (window.location.port && window.location.port !== '3000' && window.location.port !== '80' && window.location.port !== '443')) {
+    if (custom) {
+      try {
+        const u = new URL(custom);
+        // Proteção contra Mixed Content: não permite HTTP em página HTTPS
+        if (window.location.protocol === 'https:' && u.protocol === 'http:') {
+          console.warn('[Online] Ignorando URL customizada HTTP em página HTTPS para evitar bloqueio de Mixed Content.');
+        } else {
+          return u.origin;
+        }
+      } catch (_) {}
+    }
+    // Se acessado localmente via file:// ou Live Server em outra porta, aponta para http://localhost:3000
+    if (window.location.protocol === 'file:') {
       return 'http://localhost:3000';
     }
-    return window.location.origin || 'http://localhost:3000';
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+      if (window.location.port && window.location.port !== '3000') {
+        return `http://${window.location.hostname}:3000`;
+      }
+    }
+    // Em produção no Render (HTTPS) ou porta padrão, usa a mesma origem
+    return window.location.origin;
   }
 
   function getOnlineApiUrl(endpoint) {
-    const custom = (localStorage.getItem('amigos_run_custom_server_url') || '').trim();
-    if (custom) {
-      return custom.replace(/\/+$/, '') + endpoint;
-    }
-    if (window.location.protocol === 'file:' || (window.location.port && window.location.port !== '3000' && window.location.port !== '80' && window.location.port !== '443')) {
-      return `http://localhost:3000${endpoint}`;
-    }
-    return endpoint;
+    const origin = getEffectiveServerOrigin();
+    const clean = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
+    return `${origin}${clean}`;
   }
 
   function getOnlineWsUrl() {
-    const custom = (localStorage.getItem('amigos_run_custom_server_url') || '').trim();
-    if (custom) {
-      const wsProto = custom.startsWith('https') ? 'wss:' : 'ws:';
-      const cleanHost = custom.replace(/^https?:\/\//, '').replace(/\/+$/, '');
-      return `${wsProto}//${cleanHost}/ws`;
+    const origin = getEffectiveServerOrigin();
+    let wsProto = 'ws:';
+    let host = 'localhost:3000';
+    try {
+      const u = new URL(origin);
+      wsProto = u.protocol === 'https:' ? 'wss:' : 'ws:';
+      host = u.host;
+    } catch (_) {
+      wsProto = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+      host = window.location.host || 'localhost:3000';
     }
-    if (window.location.protocol === 'file:' || (window.location.port && window.location.port !== '3000' && window.location.port !== '80' && window.location.port !== '443')) {
-      return 'ws://localhost:3000/ws';
-    }
-    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    return `${protocol}//${window.location.host}/ws`;
+    const curId = (playerProfile && playerProfile.playerId) || localStorage.getItem('amigos_run_player_id') || '';
+    const q = curId ? `?playerId=${encodeURIComponent(curId)}` : '';
+    return `${wsProto}//${host}/ws${q}`;
   }
 
   function updatePlayerProfileUi() {
@@ -5795,27 +5868,75 @@
       customServerInput.value = localStorage.getItem('amigos_run_custom_server_url') || '';
     }
     if (modalServerHostText) {
-      modalServerHostText.textContent = getEffectiveServerHost();
+      modalServerHostText.textContent = getEffectiveServerOrigin();
+    }
+  }
+
+  let currentOnlineState = 'CONNECTING';
+  let currentOnlineCount = 0;
+
+  function updateOnlineState(state, count = null) {
+    currentOnlineState = state;
+    if (typeof count === 'number') currentOnlineCount = count;
+
+    if (state === 'CONNECTED') {
+      const c = currentOnlineCount;
+      if (onlineCountText) onlineCountText.textContent = `${c} ${c === 1 ? 'ONLINE' : 'ONLINE'}`;
+      if (liveDotIndicator) liveDotIndicator.className = 'live-dot connected';
+      if (rankingStatusBadge) {
+        rankingStatusBadge.innerHTML = '🟢 ONLINE';
+        rankingStatusBadge.style.borderColor = 'rgba(16, 185, 129, 0.55)';
+        rankingStatusBadge.style.color = '#34d399';
+      }
+      if (modalOnlineStatusText) {
+        modalOnlineStatusText.innerHTML = `🟢 CONECTADO (${c} online)`;
+        modalOnlineStatusText.style.color = '#34d399';
+      }
+    } else if (state === 'CONNECTING') {
+      if (onlineCountText) onlineCountText.textContent = 'CONECTANDO...';
+      if (liveDotIndicator) liveDotIndicator.className = 'live-dot connecting';
+      if (rankingStatusBadge) {
+        rankingStatusBadge.innerHTML = '🟡 CONECTANDO';
+        rankingStatusBadge.style.borderColor = 'rgba(234, 179, 8, 0.55)';
+        rankingStatusBadge.style.color = '#facc15';
+      }
+      if (modalOnlineStatusText) {
+        modalOnlineStatusText.innerHTML = '🟡 CONECTANDO...';
+        modalOnlineStatusText.style.color = '#facc15';
+      }
+    } else if (state === 'RECONNECTING') {
+      if (onlineCountText) onlineCountText.textContent = 'RECONECTANDO...';
+      if (liveDotIndicator) liveDotIndicator.className = 'live-dot reconnecting';
+      if (rankingStatusBadge) {
+        rankingStatusBadge.innerHTML = '🟠 RECONECTANDO';
+        rankingStatusBadge.style.borderColor = 'rgba(249, 115, 22, 0.55)';
+        rankingStatusBadge.style.color = '#fb923c';
+      }
+      if (modalOnlineStatusText) {
+        modalOnlineStatusText.innerHTML = '🟠 RECONECTANDO...';
+        modalOnlineStatusText.style.color = '#fb923c';
+      }
+    } else { // DISCONNECTED
+      if (onlineCountText) onlineCountText.textContent = 'DESCONECTADO';
+      if (liveDotIndicator) liveDotIndicator.className = 'live-dot disconnected';
+      if (rankingStatusBadge) {
+        rankingStatusBadge.innerHTML = '🔴 OFFLINE';
+        rankingStatusBadge.style.borderColor = '#ef4444';
+        rankingStatusBadge.style.color = '#f87171';
+      }
+      if (modalOnlineStatusText) {
+        modalOnlineStatusText.innerHTML = '🔴 DESCONECTADO';
+        modalOnlineStatusText.style.color = '#f87171';
+      }
     }
   }
 
   function updateOnlineStatus(isOnline) {
-    if (rankingStatusBadge) {
-      rankingStatusBadge.innerHTML = isOnline ? '🟢 ONLINE' : '🔴 OFFLINE';
-      rankingStatusBadge.style.borderColor = isOnline ? 'rgba(16, 185, 129, 0.55)' : '#ef4444';
-      rankingStatusBadge.style.color = isOnline ? '#34d399' : '#f87171';
-    }
-    if (modalOnlineStatusText) {
-      modalOnlineStatusText.innerHTML = isOnline ? '🟢 CONECTADO' : '🔴 OFFLINE';
-      modalOnlineStatusText.style.color = isOnline ? '#34d399' : '#f87171';
-    }
+    updateOnlineState(isOnline ? 'CONNECTED' : 'DISCONNECTED');
   }
 
   function updateOnlineCount(count) {
-    if (onlineCountText) {
-      const c = Math.max(1, count || 1);
-      onlineCountText.textContent = `${c} ${c === 1 ? 'ONLINE' : 'ONLINE'}`;
-    }
+    updateOnlineState('CONNECTED', count);
   }
 
   async function registerPlayer(nicknameOverride = null) {
@@ -5837,6 +5958,7 @@
           favoriteChar: getCurrentFriend() ? getCurrentFriend().id : 'di5'
         })
       });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
       if (data && data.success && data.player) {
         playerProfile.playerId = data.player.playerId;
@@ -5850,14 +5972,23 @@
         localStorage.setItem('amigos_run_player_nickname', playerProfile.nickname);
 
         updatePlayerProfileUi();
-        updateOnlineStatus(true);
+
+        // Se o WebSocket já estiver aberto, identifica o jogador para sincronização
+        if (onlineSocket && onlineSocket.readyState === WebSocket.OPEN) {
+          try {
+            onlineSocket.send(JSON.stringify({
+              type: 'IDENTIFY',
+              data: { playerId: playerProfile.playerId }
+            }));
+          } catch (_) {}
+        }
+
         if (activeLeaderboardTab === 'global') {
           renderGlobalLeaderboard();
         }
       }
     } catch (err) {
-      console.warn('[Online] Servidor indisponível no momento, usando modo local:', err);
-      updateOnlineStatus(false);
+      console.warn('[Online] Servidor de registro offline, mantendo perfil local:', err.message);
       if (!playerProfile.playerId || playerProfile.playerId.startsWith('local_')) {
         playerProfile.playerId = validStoredId || 'local_' + Date.now();
         playerProfile.playerSecret = validStoredSecret || 'local_secret';
@@ -5869,13 +6000,13 @@
 
   function showGlobalRecordBanner(record) {
     if (!globalRecordBanner) return;
-    const isMe = record.playerId === playerProfile.playerId;
+    const isMe = Boolean(playerProfile.playerId && record.playerId === playerProfile.playerId);
     const charObj = friends.find(f => f.id === record.characterId) || { name: record.characterId || 'Corredor' };
     globalRecordBanner.innerHTML = `
       <span style="font-size:16px;">${record.isNewGlobalLeader ? '👑' : '⚡'}</span>
       <div style="text-align:left;">
         <div style="color:var(--accent-yellow);font-weight:bold;font-size:8.5px;">
-          ${isMe ? '⭐ VOCÊ ATINGIU UM NOVO RECORDE!' : `👑 ${record.nickname.toUpperCase()} BATEU NOVO RECORDE!`}
+          ${isMe ? '⭐ VOCÊ ATINGIU UM NOVO RECORDE!' : `👑 ${escapeHtml(record.nickname).toUpperCase()} BATEU NOVO RECORDE!`}
         </div>
         <div style="font-size:7.5px;color:#e9d5ff;margin-top:2px;">
           ${record.score} PTS · #${record.rank} GLOBAL · COM ${charObj.name.toUpperCase()}
@@ -5894,18 +6025,47 @@
     }, 5500);
   }
 
+  let wsReconnectAttempts = 0;
+
   function connectWebSocket() {
     if (socketReconnectTimer) {
       clearTimeout(socketReconnectTimer);
       socketReconnectTimer = null;
     }
 
+    if (onlineSocket) {
+      try {
+        onlineSocket.onopen = null;
+        onlineSocket.onmessage = null;
+        onlineSocket.onclose = null;
+        onlineSocket.onerror = null;
+        if (onlineSocket.readyState === WebSocket.OPEN || onlineSocket.readyState === WebSocket.CONNECTING) {
+          onlineSocket.close(1000, 'Reconnecting');
+        }
+      } catch (_) {}
+      onlineSocket = null;
+    }
+
+    updateOnlineState(wsReconnectAttempts > 0 ? 'RECONNECTING' : 'CONNECTING');
+
     try {
       const wsUrl = getOnlineWsUrl();
+      console.log('[Online] Conectando WebSocket:', wsUrl);
       onlineSocket = new WebSocket(wsUrl);
 
       onlineSocket.onopen = () => {
-        updateOnlineStatus(true);
+        console.log('[Online] WebSocket conectado com sucesso!');
+        wsReconnectAttempts = 0;
+        updateOnlineState('CONNECTED');
+
+        if (playerProfile.playerId) {
+          try {
+            onlineSocket.send(JSON.stringify({
+              type: 'IDENTIFY',
+              data: { playerId: playerProfile.playerId }
+            }));
+          } catch (_) {}
+        }
       };
 
       onlineSocket.onmessage = (event) => {
@@ -5913,24 +6073,30 @@
           const msg = JSON.parse(event.data);
           if (msg.type === 'INIT') {
             if (msg.data) {
-              globalLeaderboardData = msg.data.leaderboard || [];
+              const list = msg.data.leaderboard || msg.data.topGlobal || [];
+              globalLeaderboardData = list;
               topByCharacterData = msg.data.topByCharacter || {};
-              updateOnlineCount(msg.data.onlineCount || 1);
-              updateOnlineStatus(true);
+              leaderboardLoading = false;
+              leaderboardError = null;
+              updateOnlineState('CONNECTED', msg.data.onlineCount);
               if (activeLeaderboardTab === 'global') {
                 renderGlobalLeaderboard();
               }
             }
           } else if (msg.type === 'ONLINE_COUNT') {
-            updateOnlineCount(msg.data && msg.data.count);
+            const count = (msg.data && typeof msg.data.count === 'number') ? msg.data.count : 0;
+            updateOnlineState('CONNECTED', count);
           } else if (msg.type === 'NEW_RECORD') {
             if (msg.data) {
               showGlobalRecordBanner(msg.data);
             }
           } else if (msg.type === 'LEADERBOARD_UPDATE') {
             if (msg.data) {
-              globalLeaderboardData = msg.data.leaderboard || [];
+              const list = msg.data.leaderboard || msg.data.topGlobal || [];
+              globalLeaderboardData = list;
               topByCharacterData = msg.data.topByCharacter || {};
+              leaderboardLoading = false;
+              leaderboardError = null;
               if (activeLeaderboardTab === 'global') {
                 renderGlobalLeaderboard();
               }
@@ -5941,38 +6107,75 @@
         }
       };
 
-      onlineSocket.onclose = () => {
-        updateOnlineStatus(false);
-        socketReconnectTimer = setTimeout(connectWebSocket, 4000);
+      onlineSocket.onclose = (event) => {
+        console.warn(`[Online] WebSocket desconectado (código ${event.code}). Agendando reconexão...`);
+        scheduleWsReconnect();
       };
 
-      onlineSocket.onerror = () => {
-        if (onlineSocket) {
-          try { onlineSocket.close(); } catch (_) {}
-        }
+      onlineSocket.onerror = (err) => {
+        console.error('[Online] Erro de conexão WebSocket:', err);
+        try { onlineSocket.close(); } catch (_) {}
       };
     } catch (err) {
-      updateOnlineStatus(false);
-      socketReconnectTimer = setTimeout(connectWebSocket, 5000);
+      console.error('[Online] Falha ao criar conexão WebSocket:', err);
+      scheduleWsReconnect();
     }
   }
 
-  async function fetchGlobalLeaderboard() {
+  function scheduleWsReconnect() {
+    if (socketReconnectTimer) clearTimeout(socketReconnectTimer);
+    wsReconnectAttempts++;
+    updateOnlineState('RECONNECTING');
+    const baseDelay = Math.min(15000, 1000 * Math.pow(1.8, Math.min(wsReconnectAttempts - 1, 4)));
+    const jitter = Math.random() * 800;
+    const delay = Math.round(baseDelay + jitter);
+    console.log(`[Online] Tentativa #${wsReconnectAttempts} agendada para daqui a ${(delay / 1000).toFixed(1)}s`);
+    socketReconnectTimer = setTimeout(connectWebSocket, delay);
+  }
+
+  let leaderboardLoading = false;
+  let leaderboardError = null;
+
+  async function fetchGlobalLeaderboard(forceLoading = false) {
+    if (forceLoading || (!globalLeaderboardData || globalLeaderboardData.length === 0)) {
+      leaderboardLoading = true;
+      leaderboardError = null;
+      if (activeLeaderboardTab === 'global') {
+        renderGlobalLeaderboard();
+      }
+    }
+
     try {
       const res = await fetch(getOnlineApiUrl('/api/leaderboard?limit=30'));
+      if (!res.ok) {
+        throw new Error(`Servidor retornou HTTP ${res.status}`);
+      }
       const data = await res.json();
       if (data && data.success) {
-        globalLeaderboardData = data.topGlobal || [];
+        const list = data.leaderboard || data.topGlobal || [];
+        globalLeaderboardData = list;
         topByCharacterData = data.topByCharacter || {};
-        updateOnlineCount(data.onlinePlayers || 1);
-        updateOnlineStatus(true);
+        leaderboardLoading = false;
+        leaderboardError = null;
+        if (typeof data.onlinePlayers === 'number') {
+          updateOnlineState('CONNECTED', data.onlinePlayers);
+        }
+        if (activeLeaderboardTab === 'global') {
+          renderGlobalLeaderboard();
+        }
+      } else {
+        throw new Error((data && data.error) ? data.error : 'Resposta de ranking inválida');
+      }
+    } catch (err) {
+      console.warn('[Online] Erro ao consultar ranking global:', err.message);
+      leaderboardLoading = false;
+      if (!globalLeaderboardData || globalLeaderboardData.length === 0) {
+        leaderboardError = err.message || 'Servidor indisponível';
+        updateOnlineState('DISCONNECTED');
         if (activeLeaderboardTab === 'global') {
           renderGlobalLeaderboard();
         }
       }
-    } catch (err) {
-      console.warn('[Online] Polling de leaderboard indisponível:', err);
-      updateOnlineStatus(false);
     }
   }
 
@@ -5980,30 +6183,54 @@
     if (!globalLeaderboardList) return;
     globalLeaderboardList.innerHTML = '';
 
-    // Se ainda não recebeu do servidor, renderiza os recordes locais de fallback
-    let listToRender = globalLeaderboardData;
-    let isFallback = false;
-    if (!listToRender || !listToRender.length) {
-      isFallback = true;
-      listToRender = (scores && scores.length) ? scores.map((s, idx) => ({
-        rank: idx + 1,
-        nickname: s.name,
-        characterId: (s.name || '').toLowerCase(),
-        score: s.score,
-        maxLevel: getLevelForScore(s.score).level,
-        date: s.date || 'Hoje'
-      })) : [
-        { rank: 1, nickname: 'Di5', characterId: 'di5', score: 450, maxLevel: 2, date: '16/10/2026' },
-        { rank: 2, nickname: 'Wendel', characterId: 'wendel', score: 380, maxLevel: 2, date: '16/10/2026' },
-        { rank: 3, nickname: 'Muniz', characterId: 'muniz', score: 310, maxLevel: 2, date: '16/10/2026' },
-        { rank: 4, nickname: 'Clarinha', characterId: 'clarinha', score: 290, maxLevel: 1, date: '16/10/2026' },
-        { rank: 5, nickname: 'Joao', characterId: 'joao', score: 260, maxLevel: 1, date: '16/10/2026' }
-      ];
+    // 1. Estado de Carregamento
+    if (leaderboardLoading) {
+      const li = document.createElement('li');
+      li.className = 'leader-state-item';
+      li.innerHTML = '<span class="state-icon">⏳</span><div style="color:var(--accent-cyan);font-weight:bold;font-size:9px;font-family:var(--pixel-font);">CARREGANDO RANKING GLOBAL...</div>';
+      globalLeaderboardList.appendChild(li);
+      return;
     }
 
-    listToRender.forEach((item, index) => {
+    // 2. Estado de Erro com Botão Tentar Novamente
+    if (leaderboardError) {
       const li = document.createElement('li');
-      const isMe = playerProfile.playerId && item.playerId === playerProfile.playerId;
+      li.className = 'leader-state-item';
+      li.innerHTML = `
+        <span class="state-icon">❌</span>
+        <div style="color:#f87171;font-weight:bold;font-size:9px;font-family:var(--pixel-font);">FALHA NA CONEXÃO COM O RANKING</div>
+        <div style="color:var(--text-muted);font-size:8px;margin:4px 0 10px;">${escapeHtml(leaderboardError)}</div>
+        <button class="retry-action-btn" id="retryLeaderboardBtn" style="background:var(--accent-purple);color:#fff;border:none;padding:5px 12px;border-radius:4px;font-family:var(--pixel-font);font-size:8px;cursor:pointer;">
+          🔄 TENTAR NOVAMENTE
+        </button>
+      `;
+      globalLeaderboardList.appendChild(li);
+      const retryBtn = document.getElementById('retryLeaderboardBtn');
+      if (retryBtn) {
+        retryBtn.onclick = () => {
+          fetchGlobalLeaderboard(true);
+        };
+      }
+      return;
+    }
+
+    // 3. Estado de Ranking Vazio
+    if (!globalLeaderboardData || globalLeaderboardData.length === 0) {
+      const li = document.createElement('li');
+      li.className = 'leader-state-item';
+      li.innerHTML = `
+        <span class="state-icon">🏆</span>
+        <div style="color:var(--accent-yellow);font-weight:bold;font-size:9px;font-family:var(--pixel-font);">NENHUM RECORDE REGISTRADO AINDA!</div>
+        <div style="color:var(--text-muted);font-size:8px;margin-top:4px;">Seja o primeiro a correr e marcar seu nome no topo mundial!</div>
+      `;
+      globalLeaderboardList.appendChild(li);
+      return;
+    }
+
+    // 4. Renderização dos Recordes Reais
+    globalLeaderboardData.forEach((item, index) => {
+      const li = document.createElement('li');
+      const isMe = Boolean(playerProfile.playerId && item.playerId && item.playerId === playerProfile.playerId);
       li.className = `leader-item ${isMe ? 'is-me' : ''}`;
 
       const rankBadge = document.createElement('span');
@@ -6019,7 +6246,7 @@
       const charHtml = `<span class="char-tag">(${charObj.name})</span>`;
       const lvlHtml = item.maxLevel ? `<span class="lvl-tag">NV${item.maxLevel}</span>` : '';
 
-      nameBox.innerHTML = `${item.nickname || 'Anônimo'} ${meHtml}${charHtml}${lvlHtml}`;
+      nameBox.innerHTML = `${escapeHtml(item.nickname || 'Anônimo')} ${meHtml}${charHtml}${lvlHtml}`;
 
       const dots = document.createElement('span');
       dots.className = 'leader-dots';
