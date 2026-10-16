@@ -58,46 +58,56 @@
     gap: 8px;
   }
 
-  /* Header & Arcade Title */
-  header {
+  /* Header & Arcade Title — Novo Design Refinado e Organizado */
+  header.arcade-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 8px 12px;
-    background: rgba(18, 14, 30, 0.9);
-    border: 2px solid var(--panel-border);
-    border-radius: 12px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+    gap: 12px;
+    padding: 10px 16px;
+    background: linear-gradient(180deg, rgba(28, 22, 50, 0.96) 0%, rgba(13, 10, 24, 0.98) 100%);
+    border: 2px solid #4d3d78;
+    border-radius: 14px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    position: relative;
+    z-index: 10;
   }
 
-  .logo-box {
+  .header-brand {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
+    flex-shrink: 0;
   }
 
   .logo-badge {
     background: var(--accent-pink);
     color: #fff;
     font-family: var(--pixel-font);
-    font-size: 9px;
-    padding: 5px 7px;
+    font-size: 8px;
+    padding: 6px 8px;
     border-radius: 6px;
-    box-shadow: 2px 2px 0 #000;
-    animation: badgePulse 2s infinite ease-in-out;
+    box-shadow: 2px 2px 0 #000, 0 0 12px rgba(255, 42, 117, 0.4);
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+    animation: badgePulse 2.4s infinite ease-in-out;
   }
 
   @keyframes badgePulse {
     0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.06); }
+    50% { transform: scale(1.04); }
   }
 
   .brand-title {
     font-family: var(--pixel-font);
-    font-size: clamp(13px, 3.6vw, 20px);
+    font-size: clamp(11px, 2.8vw, 16px);
     letter-spacing: 1px;
     color: #fff;
     text-shadow: 2px 2px 0 #582194, 3px 3px 0 #000;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 6px;
   }
 
   .brand-title span {
@@ -105,10 +115,60 @@
     text-shadow: 2px 2px 0 #007799, 3px 3px 0 #000;
   }
 
-  .header-actions {
+  .brand-game-tag {
+    font-size: 0.65em;
+    color: var(--accent-cyan);
+    background: rgba(0, 240, 255, 0.12);
+    border: 1px solid rgba(0, 240, 255, 0.4);
+    padding: 2px 5px;
+    border-radius: 4px;
+    letter-spacing: 0.5px;
+  }
+
+  .header-online-hub {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
+    background: rgba(8, 6, 16, 0.75);
+    padding: 4px 8px;
+    border-radius: 10px;
+    border: 1px solid rgba(168, 85, 247, 0.35);
+    box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.5);
+  }
+
+  .header-tools-hub {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  .quick-tools-group {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    background: rgba(8, 6, 16, 0.6);
+    padding: 3px 6px;
+    border-radius: 8px;
+    border: 1px solid #362c55;
+  }
+
+  .icon-btn.rank-btn {
+    border-color: var(--accent-cyan);
+    color: #e0faff;
+    background: linear-gradient(180deg, #182b40 0%, #101d2d 100%);
+    box-shadow: 0 2px 0 #071018, 0 0 10px rgba(0, 240, 255, 0.2);
+  }
+  .icon-btn.rank-btn:hover {
+    background: linear-gradient(180deg, #244263 0%, #162a3f 100%);
+    box-shadow: 0 3px 0 #071018, 0 0 14px rgba(0, 240, 255, 0.4);
+  }
+
+  .tool-icon-btn {
+    padding: 5px 8px;
+    font-size: 8px;
+    background: #1e1933;
+    border-radius: 6px;
   }
 
   /* Pixel Icon SVGs & Badges */
@@ -1297,13 +1357,26 @@
     body {
       padding: 4px 4px 18px;
     }
-    header {
+    header.arcade-header {
       flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+      padding: 8px 10px;
+    }
+    .header-brand {
+      width: 100%;
+      justify-content: center;
+      margin-bottom: 2px;
+    }
+    .header-online-hub {
+      flex-wrap: wrap;
+      justify-content: center;
       gap: 6px;
     }
-    .header-actions {
+    .header-tools-hub {
       flex-wrap: wrap;
-      gap: 4px;
+      justify-content: center;
+      gap: 6px;
     }
   }
 
@@ -1427,41 +1500,47 @@
   <!-- Notificação Flutuante de Novo Recorde Global em Tempo Real -->
   <div class="global-record-banner" id="globalRecordBanner" style="display:none;"></div>
 
-  <!-- Cabeçalho Retrô com Status Online, Perfil de Jogador, Pausa e Som -->
-  <header>
-    <div class="logo-box">
+  <!-- Cabeçalho Retrô Moderno: Organizado em 3 Seções Claras e Elegantes -->
+  <header class="arcade-header">
+    <!-- 1. Marca & Logo Retrô -->
+    <div class="header-brand">
       <div class="logo-badge">RETRO ARCADE</div>
-      <div class="brand-title">A GRANDE <span>FAMÍLIA</span> <span style="font-size:0.65em;color:var(--accent-cyan);vertical-align:middle;">GAME</span></div>
+      <div class="brand-title">A GRANDE <span>FAMÍLIA</span> <span class="brand-game-tag">GAME</span></div>
     </div>
-    <div class="header-actions">
-      <!-- Indicador Real de Jogadores Conectados -->
-      <div class="online-counter-badge" id="onlineCounterBadge" title="Jogadores conectados no A GRANDE FAMÍLIA GAME agora">
+
+    <!-- 2. Hub Online & Identidade do Jogador -->
+    <div class="header-online-hub">
+      <div class="online-counter-badge" id="onlineCounterBadge" title="Jogadores conectados no A GRANDE FAMÍLIA GAME">
         <span class="online-dot"></span> <span id="onlineCountText">1 ONLINE</span>
       </div>
 
-      <!-- Perfil do Jogador e Apelido Público -->
-      <button class="player-nick-btn" id="playerProfileBtn" title="Alterar seu apelido público no Ranking Global">
+      <button class="player-nick-btn" id="playerProfileBtn" title="Alterar seu apelido público e ver conexão com o servidor">
         <span class="pixel-btn-icon"><svg viewBox="0 0 16 16" width="13" height="13" fill="currentColor"><path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm4 8c0-2.2-3.6-3-6-3s-6 .8-6 3v1h12v-1z"/></svg></span>
         <span id="headerPlayerNick">CORREDOR</span>
       </button>
 
-      <!-- Atalho Rápido para o Ranking Global -->
-      <button class="icon-btn" id="headerGlobalRankBtn" title="Ir para o Ranking Global">
+      <button class="icon-btn rank-btn" id="headerGlobalRankBtn" title="Ir para o Ranking Global Online">
         <span class="pixel-btn-icon">🌍</span> RANKING
       </button>
+    </div>
 
-      <button class="icon-btn pause-btn" id="headerPauseBtn" title="Pausar o jogo / Menu (Esc)">
+    <!-- 3. Ações de Jogo & Utilitários Rápidos -->
+    <div class="header-tools-hub">
+      <button class="icon-btn pause-btn" id="headerPauseBtn" title="Pausar o jogo / Menu de Opções (Esc)">
         <span class="pixel-btn-icon"><svg viewBox="0 0 16 16" width="15" height="15" fill="currentColor"><path d="M2 3h12v2H2zm0 4h12v2H2zm0 4h12v2H2z"/></svg></span> MENU
       </button>
-      <button class="icon-btn" id="audioToggleBtn" title="Ativar/Desativar Sons Retrô 8-bit">
-        <span id="audioIcon" class="pixel-btn-icon"><svg viewBox="0 0 16 16" width="15" height="15" fill="currentColor"><path d="M1 5h3l4-4v14l-4-4H1V5zm9 0h1v6h-1V5zm2-2h1v10h-1V3zm2-2h1v14h-1V1z"/></svg></span> SOM
-      </button>
-      <button class="icon-btn" id="passPhoneBtn" title="Passar a vez para o próximo amigo">
-        <span class="pixel-btn-icon"><svg viewBox="0 0 16 16" width="15" height="15" fill="currentColor"><path d="M3 1h3v2H4v2h2v2H1V1h2zm10 0h2v6h-6V5h2V3h-2V1h4zm-7 8h6v6h-2v-2h-2v2H6V9zm-5 6H1V9h6v2H5v2h2v2H1z"/></svg></span> PRÓXIMO
-      </button>
-      <button class="icon-btn" id="headerFullscreenBtn" title="Ativar/Desativar Tela Cheia">
-        <span id="fullscreenIcon" class="pixel-btn-icon"><svg viewBox="0 0 16 16" width="15" height="15" fill="currentColor"><path d="M1 1h5v2H3v3H1V1zm9 0h5v5h-2V3h-3V1zM3 13h3v2H1v-5h2v3zm10-3h2v5h-5v-2h3v-3z"/></svg></span> TELA CHEIA
-      </button>
+
+      <div class="quick-tools-group">
+        <button class="icon-btn tool-icon-btn" id="audioToggleBtn" title="Ativar/Desativar Sons Retrô 8-bit">
+          <span id="audioIcon" class="pixel-btn-icon"><svg viewBox="0 0 16 16" width="15" height="15" fill="currentColor"><path d="M1 5h3l4-4v14l-4-4H1V5zm9 0h1v6h-1V5zm2-2h1v10h-1V3zm2-2h1v14h-1V1z"/></svg></span> SOM
+        </button>
+        <button class="icon-btn tool-icon-btn" id="passPhoneBtn" title="Passar a vez para o próximo amigo">
+          <span class="pixel-btn-icon"><svg viewBox="0 0 16 16" width="15" height="15" fill="currentColor"><path d="M3 1h3v2H4v2h2v2H1V1h2zm10 0h2v6h-6V5h2V3h-2V1h4zm-7 8h6v6h-2v-2h-2v2H6V9zm-5 6H1V9h6v2H5v2h2v2H1z"/></svg></span> PRÓXIMO
+        </button>
+        <button class="icon-btn tool-icon-btn" id="headerFullscreenBtn" title="Ativar/Desativar Tela Cheia">
+          <span id="fullscreenIcon" class="pixel-btn-icon"><svg viewBox="0 0 16 16" width="15" height="15" fill="currentColor"><path d="M1 1h5v2H3v3H1V1zm9 0h5v5h-2V3h-3V1zM3 13h3v2H1v-5h2v3zm10-3h2v5h-5v-2h3v-3z"/></svg></span> TELA CHEIA
+        </button>
+      </div>
     </div>
   </header>
 
@@ -1688,25 +1767,41 @@
 
   </div>
 
-  <!-- Modal Retrô de Edição de Apelido Público -->
+  <!-- Modal Retrô de Edição de Apelido & Conexão Online -->
   <div class="pause-overlay hidden" id="nicknameModal">
-    <div class="pause-box" style="max-width:380px;">
-      <h3 class="pause-title" style="color:var(--accent-cyan);">PERFIL DO CORREDOR</h3>
-      <p style="font-size:11px;color:var(--text-muted);margin:0 0 14px;">Defina seu apelido para disputar o ranking online global com todos os jogadores!</p>
+    <div class="pause-box" style="max-width:420px;">
+      <h3 class="pause-title" style="color:var(--accent-cyan);"><span class="pixel-btn-icon">🌐</span> PERFIL &amp; MULTIPLAYER ONLINE</h3>
+      <p style="font-size:11px;color:var(--text-muted);margin:0 0 12px;">Defina seu apelido para disputar o ranking online global com todos os jogadores!</p>
       
+      <!-- Campo de Apelido -->
       <div style="margin-bottom:12px;text-align:left;">
         <label style="font-size:9px;color:var(--accent-yellow);display:block;margin-bottom:6px;font-family:var(--pixel-font);">SEU APELIDO (2 a 14 letras):</label>
         <input type="text" id="nicknameModalInput" class="input-retro" maxlength="14" style="width:100%;font-size:12px;padding:8px;" placeholder="Ex: Di5, Rayan, Wendel...">
       </div>
-      
-      <div style="font-size:9px;color:var(--text-muted);margin-bottom:14px;background:rgba(0,0,0,0.3);padding:6px 8px;border-radius:6px;border:1px solid #332a4e;">
+
+      <!-- Informações do Servidor e Conexão -->
+      <div style="font-size:9px;color:var(--text-muted);margin-bottom:12px;background:rgba(0,0,0,0.4);padding:8px 10px;border-radius:8px;border:1px solid #332a4e;text-align:left;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+          <span>STATUS DA REDE:</span>
+          <b id="modalOnlineStatusText" style="color:#34d399;">🟢 CONECTADO</b>
+        </div>
+        <div style="margin-bottom:4px;word-break:break-all;">
+          <span>SERVIDOR ATUAL:</span>
+          <b id="modalServerHostText" style="color:var(--accent-cyan);font-family:monospace;">http://localhost:3000</b>
+        </div>
         <div>ID Persistente: <b id="nicknameModalPlayerId" style="color:var(--accent-pink);font-family:monospace;">---</b></div>
-        <div style="margin-top:2px;">Seus recordes são salvos com segurança neste ID.</div>
+      </div>
+
+      <!-- Configuração de Servidor Customizado (Render / Nuvem) -->
+      <div style="margin-bottom:14px;text-align:left;">
+        <label style="font-size:8px;color:#cbd5e1;display:block;margin-bottom:4px;font-family:var(--pixel-font);">SERVIDOR REMOTO / RENDER (OPCIONAL):</label>
+        <input type="text" id="customServerInput" class="input-retro" style="width:100%;font-size:10px;padding:6px;font-family:monospace;" placeholder="Ex: https://amigos-run.onrender.com">
+        <span style="font-size:7.5px;color:#857f9d;display:block;margin-top:3px;">Deixe vazio para detecção automática (localhost:3000 ou nuvem).</span>
       </div>
 
       <div class="pause-actions" style="display:flex;gap:8px;">
         <button class="btn-arcade" id="nicknameSaveBtn" style="flex:1;">
-          SALVAR APELIDO
+          SALVAR ALTERAÇÕES
         </button>
         <button class="btn-arcade secondary" id="nicknameCancelBtn" style="flex:1;">
           FECHAR
@@ -1984,6 +2079,9 @@
   const nicknameModal = document.getElementById('nicknameModal');
   const nicknameModalInput = document.getElementById('nicknameModalInput');
   const nicknameModalPlayerId = document.getElementById('nicknameModalPlayerId');
+  const modalOnlineStatusText = document.getElementById('modalOnlineStatusText');
+  const modalServerHostText = document.getElementById('modalServerHostText');
+  const customServerInput = document.getElementById('customServerInput');
   const nicknameSaveBtn = document.getElementById('nicknameSaveBtn');
   const nicknameCancelBtn = document.getElementById('nicknameCancelBtn');
   const globalRecordBanner = document.getElementById('globalRecordBanner');
@@ -4799,6 +4897,40 @@
   // --------------------------------------------------------------------------
   // SISTEMA ONLINE, RANKING GLOBAL COMPARTILHADO & REAL-TIME WEBSOCKET
   // --------------------------------------------------------------------------
+  function getEffectiveServerHost() {
+    const custom = (localStorage.getItem('amigos_run_custom_server_url') || '').trim();
+    if (custom) return custom.replace(/\/+$/, '');
+    if (window.location.protocol === 'file:' || (window.location.port && window.location.port !== '3000' && window.location.port !== '80' && window.location.port !== '443')) {
+      return 'http://localhost:3000';
+    }
+    return window.location.origin || 'http://localhost:3000';
+  }
+
+  function getOnlineApiUrl(endpoint) {
+    const custom = (localStorage.getItem('amigos_run_custom_server_url') || '').trim();
+    if (custom) {
+      return custom.replace(/\/+$/, '') + endpoint;
+    }
+    if (window.location.protocol === 'file:' || (window.location.port && window.location.port !== '3000' && window.location.port !== '80' && window.location.port !== '443')) {
+      return `http://localhost:3000${endpoint}`;
+    }
+    return endpoint;
+  }
+
+  function getOnlineWsUrl() {
+    const custom = (localStorage.getItem('amigos_run_custom_server_url') || '').trim();
+    if (custom) {
+      const wsProto = custom.startsWith('https') ? 'wss:' : 'ws:';
+      const cleanHost = custom.replace(/^https?:\/\//, '').replace(/\/+$/, '');
+      return `${wsProto}//${cleanHost}/ws`;
+    }
+    if (window.location.protocol === 'file:' || (window.location.port && window.location.port !== '3000' && window.location.port !== '80' && window.location.port !== '443')) {
+      return 'ws://localhost:3000/ws';
+    }
+    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    return `${protocol}//${window.location.host}/ws`;
+  }
+
   function updatePlayerProfileUi() {
     const nick = playerProfile.nickname || 'Corredor';
     if (headerPlayerNick) headerPlayerNick.textContent = nick.toUpperCase();
@@ -4808,6 +4940,12 @@
     if (nicknameModalInput) {
       nicknameModalInput.value = playerProfile.nickname || '';
     }
+    if (customServerInput) {
+      customServerInput.value = localStorage.getItem('amigos_run_custom_server_url') || '';
+    }
+    if (modalServerHostText) {
+      modalServerHostText.textContent = getEffectiveServerHost();
+    }
   }
 
   function updateOnlineStatus(isOnline) {
@@ -4815,6 +4953,10 @@
       rankingStatusBadge.innerHTML = isOnline ? '🟢 ONLINE' : '🔴 OFFLINE';
       rankingStatusBadge.style.borderColor = isOnline ? 'rgba(16, 185, 129, 0.55)' : '#ef4444';
       rankingStatusBadge.style.color = isOnline ? '#34d399' : '#f87171';
+    }
+    if (modalOnlineStatusText) {
+      modalOnlineStatusText.innerHTML = isOnline ? '🟢 CONECTADO' : '🔴 OFFLINE';
+      modalOnlineStatusText.style.color = isOnline ? '#34d399' : '#f87171';
     }
   }
 
@@ -4834,7 +4976,7 @@
     const validStoredSecret = (storedSecret && !storedSecret.startsWith('local_')) ? storedSecret : undefined;
 
     try {
-      const res = await fetch('/api/player/register', {
+      const res = await fetch(getOnlineApiUrl('/api/player/register'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -4857,12 +4999,14 @@
         localStorage.setItem('amigos_run_player_nickname', playerProfile.nickname);
 
         updatePlayerProfileUi();
+        updateOnlineStatus(true);
         if (activeLeaderboardTab === 'global') {
           renderGlobalLeaderboard();
         }
       }
     } catch (err) {
       console.warn('[Online] Servidor indisponível no momento, usando modo local:', err);
+      updateOnlineStatus(false);
       if (!playerProfile.playerId || playerProfile.playerId.startsWith('local_')) {
         playerProfile.playerId = validStoredId || 'local_' + Date.now();
         playerProfile.playerSecret = validStoredSecret || 'local_secret';
@@ -4906,8 +5050,7 @@
     }
 
     try {
-      const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-      const wsUrl = `${protocol}//${window.location.host}/ws`;
+      const wsUrl = getOnlineWsUrl();
       onlineSocket = new WebSocket(wsUrl);
 
       onlineSocket.onopen = () => {
@@ -4922,6 +5065,7 @@
               globalLeaderboardData = msg.data.leaderboard || [];
               topByCharacterData = msg.data.topByCharacter || {};
               updateOnlineCount(msg.data.onlineCount || 1);
+              updateOnlineStatus(true);
               if (activeLeaderboardTab === 'global') {
                 renderGlobalLeaderboard();
               }
@@ -4964,7 +5108,7 @@
 
   async function fetchGlobalLeaderboard() {
     try {
-      const res = await fetch('/api/leaderboard?limit=30');
+      const res = await fetch(getOnlineApiUrl('/api/leaderboard?limit=30'));
       const data = await res.json();
       if (data && data.success) {
         globalLeaderboardData = data.topGlobal || [];
@@ -5046,7 +5190,7 @@
     currentSessionId = null;
     if (!playerProfile.playerId) return;
     try {
-      const res = await fetch('/api/session/start', {
+      const res = await fetch(getOnlineApiUrl('/api/session/start'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -5067,7 +5211,7 @@
   async function finishOnlineSession(finalScore, curLvl, stats) {
     if (!playerProfile.playerId || !currentSessionId) return;
     try {
-      const res = await fetch('/api/session/finish', {
+      const res = await fetch(getOnlineApiUrl('/api/session/finish'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -5146,7 +5290,17 @@
       alert('O apelido deve ter pelo menos 2 caracteres.');
       return;
     }
+    if (customServerInput) {
+      const serverVal = customServerInput.value.trim();
+      if (serverVal) {
+        localStorage.setItem('amigos_run_custom_server_url', serverVal);
+      } else {
+        localStorage.removeItem('amigos_run_custom_server_url');
+      }
+    }
     await registerPlayer(raw);
+    connectWebSocket();
+    fetchGlobalLeaderboard();
     closeNicknameModal();
     showToast(`APELIDO SALVO: ${playerProfile.nickname.toUpperCase()}!`);
   }
@@ -5169,6 +5323,19 @@
       e.stopPropagation();
     });
     nicknameModalInput.addEventListener('keypress', (e) => {
+      e.stopPropagation();
+    });
+  }
+  if (customServerInput) {
+    customServerInput.addEventListener('keydown', (e) => {
+      e.stopPropagation();
+      if (e.key === 'Enter') saveNickname();
+      if (e.key === 'Escape') closeNicknameModal();
+    });
+    customServerInput.addEventListener('keyup', (e) => {
+      e.stopPropagation();
+    });
+    customServerInput.addEventListener('keypress', (e) => {
       e.stopPropagation();
     });
   }

@@ -55,6 +55,18 @@ let leaderboard = loadJsonSafe(LEADERBOARD_FILE, [
   { playerId: 'bot_joao', nickname: 'Joao', characterId: 'joao', score: 260, maxLevel: 1, date: '16/10/2026', timestamp: 1729091000000 }
 ]);
 
+// Se players estiver vazio, preenche automaticamente e salva no disco
+if (!players || Object.keys(players).length === 0) {
+  players = {
+    bot_di5: { id: 'bot_di5', secret: 'bot_secret_di5_retro', nickname: 'Di5', favoriteChar: 'di5', createdAt: 1729094400000, lastLogin: 1729094400000, bestScore: 450, matchesPlayed: 12 },
+    bot_wendel: { id: 'bot_wendel', secret: 'bot_secret_wendel_retro', nickname: 'Wendel', favoriteChar: 'wendel', createdAt: 1729094000000, lastLogin: 1729094000000, bestScore: 380, matchesPlayed: 9 },
+    bot_muniz: { id: 'bot_muniz', secret: 'bot_secret_muniz_retro', nickname: 'Muniz', favoriteChar: 'muniz', createdAt: 1729093000000, lastLogin: 1729093000000, bestScore: 310, matchesPlayed: 7 },
+    bot_clarinha: { id: 'bot_clarinha', secret: 'bot_secret_clarinha_retro', nickname: 'Clarinha', favoriteChar: 'clarinha', createdAt: 1729092000000, lastLogin: 1729092000000, bestScore: 290, matchesPlayed: 6 },
+    bot_joao: { id: 'bot_joao', secret: 'bot_secret_joao_retro', nickname: 'Joao', favoriteChar: 'joao', createdAt: 1729091000000, lastLogin: 1729091000000, bestScore: 260, matchesPlayed: 5 }
+  };
+  saveJsonAtomic(PLAYERS_FILE, players);
+}
+
 // Sessões ativas de corrida para proteção anti-cheat
 const activeGameSessions = new Map();
 
