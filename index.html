@@ -58,117 +58,312 @@
     gap: 8px;
   }
 
-  /* Header & Arcade Title — Novo Design Refinado e Organizado */
-  header.arcade-header {
+  /* ==========================================================================
+     TOPBAR INDIE PROFISSIONAL RETRO ARCADE — A GRANDE FAMÍLIA GAME
+     Estética de jogo indie publicado: alinhamento perfeito, altura compacta,
+     fundo roxo quase preto (#110b22), bordas discretas (#362854) e botões consistentes.
+     ========================================================================== */
+  header.indie-topbar {
+    width: 100%;
+    min-height: 46px;
+    height: 46px;
+    padding: 0 12px;
+    background: radial-gradient(ellipse at 50% -10%, #221842 0%, #100b20 100%);
+    border: 1px solid #382a5c;
+    border-radius: 8px;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.07);
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 12px;
-    padding: 10px 16px;
-    background: linear-gradient(180deg, rgba(28, 22, 50, 0.96) 0%, rgba(13, 10, 24, 0.98) 100%);
-    border: 2px solid #4d3d78;
-    border-radius: 14px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.08);
     position: relative;
-    z-index: 10;
+    z-index: 100;
+    box-sizing: border-box;
   }
 
-  .header-brand {
+  /* Seções da Barra Superior (Esquerda, Centro, Direita) */
+  .topbar-section {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
+  }
+  .topbar-left {
     flex-shrink: 0;
+    gap: 8px;
   }
-
-  .logo-badge {
-    background: var(--accent-pink);
-    color: #fff;
-    font-family: var(--pixel-font);
-    font-size: 8px;
-    padding: 6px 8px;
-    border-radius: 6px;
-    box-shadow: 2px 2px 0 #000, 0 0 12px rgba(255, 42, 117, 0.4);
-    letter-spacing: 0.5px;
-    white-space: nowrap;
-    animation: badgePulse 2.4s infinite ease-in-out;
-  }
-
-  @keyframes badgePulse {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.04); }
-  }
-
-  .brand-title {
-    font-family: var(--pixel-font);
-    font-size: clamp(11px, 2.8vw, 16px);
-    letter-spacing: 1px;
-    color: #fff;
-    text-shadow: 2px 2px 0 #582194, 3px 3px 0 #000;
-    white-space: nowrap;
+  .topbar-center {
     display: flex;
     align-items: center;
     gap: 6px;
+    justify-content: center;
+    flex: 1;
+    max-width: 480px;
+  }
+  .topbar-right {
+    flex-shrink: 0;
+    gap: 6px;
+    justify-content: flex-end;
   }
 
-  .brand-title span {
-    color: var(--accent-cyan);
-    text-shadow: 2px 2px 0 #007799, 3px 3px 0 #000;
+  /* 1. À Esquerda: Coroa Pixel Art & Marca Oficial */
+  .pixel-crown-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    color: var(--accent-yellow);
+    filter: drop-shadow(0 0 5px rgba(255, 214, 0, 0.5));
+    animation: crownFloat 2.8s infinite alternate ease-in-out;
+  }
+  @keyframes crownFloat {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(-1.5px); }
   }
 
-  .brand-game-tag {
-    font-size: 0.65em;
+  .brand-title-box {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+    user-select: none;
+  }
+  .brand-title-box .brand-name {
+    font-family: var(--pixel-font);
+    font-size: clamp(10px, 1.8vw, 12px);
+    color: #f8f6ff;
+    letter-spacing: 0.6px;
+    text-shadow: 1px 1px 0 #3b195c, 2px 2px 0 #000;
+  }
+  .brand-title-box .brand-badge {
+    font-family: var(--pixel-font);
+    font-size: 7.5px;
     color: var(--accent-cyan);
     background: rgba(0, 240, 255, 0.12);
     border: 1px solid rgba(0, 240, 255, 0.4);
     padding: 2px 5px;
     border-radius: 4px;
     letter-spacing: 0.5px;
+    box-shadow: 0 0 8px rgba(0, 240, 255, 0.2);
   }
 
-  .header-online-hub {
-    display: flex;
+  /* 2. Botões Padronizados da Barra Superior (Mesma Altura, Raio e Tipografia) */
+  .topbar-btn {
+    height: 32px;
+    min-height: 32px;
+    padding: 0 10px;
+    background: #1c1536;
+    border: 1px solid #3b2c60;
+    border-radius: 6px;
+    color: #ded8f5;
+    font-family: var(--pixel-font);
+    font-size: 8px;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    display: inline-flex;
     align-items: center;
-    gap: 8px;
-    background: rgba(8, 6, 16, 0.75);
-    padding: 4px 8px;
-    border-radius: 10px;
-    border: 1px solid rgba(168, 85, 247, 0.35);
-    box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    gap: 6px;
+    box-sizing: border-box;
+    white-space: nowrap;
+    text-transform: uppercase;
+    transition: background 0.12s ease, border-color 0.12s ease, color 0.12s ease, transform 0.08s ease, box-shadow 0.12s ease;
+    box-shadow: 0 2px 0 #0d091a, inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    user-select: none;
   }
 
-  .header-tools-hub {
-    display: flex;
+  .topbar-btn:hover {
+    background: #281e4c;
+    border-color: #634a9b;
+    color: #ffffff;
+    transform: translateY(-1px);
+    box-shadow: 0 3px 0 #0d091a, 0 4px 10px rgba(0, 0, 0, 0.35);
+  }
+
+  .topbar-btn:focus-visible {
+    outline: 2px solid var(--accent-cyan);
+    outline-offset: 1px;
+  }
+
+  .topbar-btn:active {
+    transform: translateY(1px);
+    box-shadow: 0 1px 0 #0d091a;
+    background: #16102b;
+  }
+
+  .topbar-btn.disabled,
+  .topbar-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none !important;
+  }
+
+  .topbar-btn .btn-icon {
+    display: inline-flex;
     align-items: center;
-    gap: 8px;
+    justify-content: center;
+    width: 14px;
+    height: 14px;
     flex-shrink: 0;
   }
+  .topbar-btn .btn-icon svg {
+    width: 14px;
+    height: 14px;
+    display: block;
+  }
 
-  .quick-tools-group {
+  /* Indicador Online Real (Ponto Verde + Quantidade Fiel) */
+  .topbar-indicator.online-indicator {
+    height: 32px;
+    padding: 0 9px;
+    background: rgba(16, 185, 129, 0.1);
+    border: 1px solid rgba(16, 185, 129, 0.35);
+    border-radius: 6px;
+    color: #34d399;
+    font-family: var(--pixel-font);
+    font-size: 8px;
+    letter-spacing: 0.5px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+    cursor: default;
+    box-sizing: border-box;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3);
+  }
+  .live-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #10b981;
+    box-shadow: 0 0 6px #10b981;
+    animation: dotPulse 2s infinite ease-in-out;
+  }
+  @keyframes dotPulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.35; transform: scale(0.85); }
+  }
+
+  /* Botão Corredor (Perfil / Apelido) */
+  .topbar-btn.profile-btn {
+    border-color: rgba(168, 85, 247, 0.45);
+    background: rgba(168, 85, 247, 0.12);
+    color: #f3e8ff;
+  }
+  .topbar-btn.profile-btn:hover {
+    border-color: var(--accent-purple);
+    background: rgba(168, 85, 247, 0.25);
+    box-shadow: 0 3px 0 #0d091a, 0 0 10px rgba(168, 85, 247, 0.3);
+  }
+
+  /* Botão Ranking (Destaque Ciano quando Selecionado) */
+  .topbar-btn.rank-btn {
+    border-color: rgba(0, 240, 255, 0.4);
+    color: #d8f8ff;
+    background: rgba(0, 240, 255, 0.08);
+  }
+  .topbar-btn.rank-btn:hover,
+  .topbar-btn.rank-btn.selected {
+    border-color: var(--accent-cyan) !important;
+    color: #00f0ff !important;
+    background: rgba(0, 240, 255, 0.18) !important;
+    box-shadow: 0 0 12px rgba(0, 240, 255, 0.35), 0 2px 0 #005566 !important;
+  }
+
+  /* Botão Menu (Destaque Secundário Amarelo) */
+  .topbar-btn.menu-btn {
+    border-color: rgba(255, 214, 0, 0.55);
+    color: #ffd600;
+    background: rgba(255, 214, 0, 0.12);
+    box-shadow: 0 2px 0 #2b2200, 0 0 8px rgba(255, 214, 0, 0.15);
+  }
+  .topbar-btn.menu-btn:hover {
+    border-color: #ffe033;
+    background: rgba(255, 214, 0, 0.22);
+    color: #ffffff;
+    box-shadow: 0 3px 0 #2b2200, 0 0 14px rgba(255, 214, 0, 0.4);
+  }
+
+  /* Botões Utilitários Rápidos (Desktop) */
+  .desktop-quick-tools {
     display: flex;
     align-items: center;
     gap: 5px;
-    background: rgba(8, 6, 16, 0.6);
-    padding: 3px 6px;
+  }
+  .topbar-btn.tool-btn {
+    padding: 0 8px;
+    font-size: 7.5px;
+    background: #17112c;
+    border-color: #322552;
+    color: #c4b9e2;
+  }
+  .topbar-btn.tool-btn:hover {
+    color: #ffffff;
+    border-color: #554085;
+    background: #231942;
+  }
+  .topbar-btn.muted {
+    opacity: 0.7;
+    border-color: #4a3b68;
+    color: #9c8fb8;
+  }
+
+  /* Botão 'Mais' (...) do Celular */
+  .topbar-btn.mobile-more-btn {
+    display: none;
+    padding: 0 8px;
+    min-width: 32px;
+  }
+
+  /* Subdock Dropdown Compacto no Celular */
+  .mobile-dropdown-dock {
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 8px;
+    background: #150f29;
+    border: 1px solid #483472;
     border-radius: 8px;
-    border: 1px solid #362c55;
+    padding: 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.85);
+    z-index: 9999;
+    min-width: 155px;
+    animation: dockFade 0.15s ease-out;
   }
-
-  .icon-btn.rank-btn {
+  @keyframes dockFade {
+    from { opacity: 0; transform: translateY(-4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .mobile-dropdown-dock.hidden {
+    display: none !important;
+  }
+  .dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 10px;
+    background: #1e163b;
+    border: 1px solid #3a2b5e;
+    border-radius: 5px;
+    color: #e5defb;
+    font-family: var(--pixel-font);
+    font-size: 7.5px;
+    cursor: pointer;
+    text-align: left;
+    width: 100%;
+    transition: background 0.12s ease;
+  }
+  .dropdown-item:hover, .dropdown-item:active {
+    background: #2b1f54;
     border-color: var(--accent-cyan);
-    color: #e0faff;
-    background: linear-gradient(180deg, #182b40 0%, #101d2d 100%);
-    box-shadow: 0 2px 0 #071018, 0 0 10px rgba(0, 240, 255, 0.2);
+    color: #ffffff;
   }
-  .icon-btn.rank-btn:hover {
-    background: linear-gradient(180deg, #244263 0%, #162a3f 100%);
-    box-shadow: 0 3px 0 #071018, 0 0 14px rgba(0, 240, 255, 0.4);
-  }
-
-  .tool-icon-btn {
-    padding: 5px 8px;
-    font-size: 8px;
-    background: #1e1933;
-    border-radius: 6px;
+  .dropdown-item .btn-icon {
+    display: inline-flex;
+    width: 13px;
+    height: 13px;
   }
 
   /* Pixel Icon SVGs & Badges */
@@ -1357,26 +1552,32 @@
     body {
       padding: 4px 4px 18px;
     }
-    header.arcade-header {
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 8px;
-      padding: 8px 10px;
-    }
-    .header-brand {
-      width: 100%;
-      justify-content: center;
-      margin-bottom: 2px;
-    }
-    .header-online-hub {
-      flex-wrap: wrap;
-      justify-content: center;
+    header.indie-topbar {
+      padding: 0 8px;
       gap: 6px;
     }
-    .header-tools-hub {
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 6px;
+    .brand-title-box .brand-badge {
+      display: none;
+    }
+    .desktop-quick-tools {
+      display: none;
+    }
+    .topbar-btn.mobile-more-btn {
+      display: inline-flex;
+    }
+    .topbar-center {
+      gap: 4px;
+    }
+    .topbar-btn {
+      font-size: 7.5px;
+      padding: 0 7px;
+      height: 30px;
+      min-height: 30px;
+    }
+    .topbar-indicator.online-indicator {
+      font-size: 7.5px;
+      padding: 0 7px;
+      height: 30px;
     }
   }
 
@@ -1500,47 +1701,91 @@
   <!-- Notificação Flutuante de Novo Recorde Global em Tempo Real -->
   <div class="global-record-banner" id="globalRecordBanner" style="display:none;"></div>
 
-  <!-- Cabeçalho Retrô Moderno: Organizado em 3 Seções Claras e Elegantes -->
-  <header class="arcade-header">
-    <!-- 1. Marca & Logo Retrô -->
-    <div class="header-brand">
-      <div class="logo-badge">RETRO ARCADE</div>
-      <div class="brand-title">A GRANDE <span>FAMÍLIA</span> <span class="brand-game-tag">GAME</span></div>
+  <!-- Topbar Retrô Arcade Profissional — Padrão Jogo Indie -->
+  <header class="indie-topbar" id="gameTopbar">
+    <!-- 1. À Esquerda: Coroa Pixel Art & Logotipo Oficial -->
+    <div class="topbar-section topbar-left">
+      <div class="pixel-crown-icon" aria-hidden="true" title="A Grande Família Game">
+        <svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor">
+          <path d="M2 3l3 4 3-5 3 5 3-4v9H2V3zm1 8h10v1H3v-1zm1-2h8v1H4V9z" fill="#ffd600"/>
+          <circle cx="2" cy="3" r="1.2" fill="#fff"/>
+          <circle cx="8" cy="2" r="1.2" fill="#fff"/>
+          <circle cx="14" cy="3" r="1.2" fill="#fff"/>
+        </svg>
+      </div>
+      <div class="brand-title-box">
+        <span class="brand-name">A GRANDE FAMÍLIA</span>
+        <span class="brand-badge">GAME</span>
+      </div>
     </div>
 
-    <!-- 2. Hub Online & Identidade do Jogador -->
-    <div class="header-online-hub">
-      <div class="online-counter-badge" id="onlineCounterBadge" title="Jogadores conectados no A GRANDE FAMÍLIA GAME">
-        <span class="online-dot"></span> <span id="onlineCountText">1 ONLINE</span>
+    <!-- 2. No Centro: Indicador Online, Botão Corredor e Botão Ranking -->
+    <div class="topbar-section topbar-center">
+      <!-- Indicador Real de Jogadores Conectados -->
+      <div class="topbar-indicator online-indicator" id="onlineCounterBadge" title="Jogadores conectados em tempo real">
+        <span class="live-dot" aria-hidden="true"></span>
+        <span id="onlineCountText">1 ONLINE</span>
       </div>
 
-      <button class="player-nick-btn" id="playerProfileBtn" title="Alterar seu apelido público e ver conexão com o servidor">
-        <span class="pixel-btn-icon"><svg viewBox="0 0 16 16" width="13" height="13" fill="currentColor"><path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm4 8c0-2.2-3.6-3-6-3s-6 .8-6 3v1h12v-1z"/></svg></span>
-        <span id="headerPlayerNick">CORREDOR</span>
+      <!-- Botão Corredor (Perfil / Apelido) -->
+      <button class="topbar-btn profile-btn" id="playerProfileBtn" title="Alterar seu apelido público e ver conexão">
+        <span class="btn-icon"><svg viewBox="0 0 16 16" width="13" height="13" fill="currentColor"><path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm4 8c0-2.2-3.6-3-6-3s-6 .8-6 3v1h12v-1z"/></svg></span>
+        <span class="btn-label" id="headerPlayerNick">CORREDOR</span>
       </button>
 
-      <button class="icon-btn rank-btn" id="headerGlobalRankBtn" title="Ir para o Ranking Global Online">
-        <span class="pixel-btn-icon">🌍</span> RANKING
+      <!-- Botão Ranking Global (Destaque Ciano quando ativo) -->
+      <button class="topbar-btn rank-btn selected" id="headerGlobalRankBtn" title="Abrir Ranking Global Online">
+        <span class="btn-icon">🌍</span>
+        <span class="btn-label">RANKING</span>
       </button>
     </div>
 
-    <!-- 3. Ações de Jogo & Utilitários Rápidos -->
-    <div class="header-tools-hub">
-      <button class="icon-btn pause-btn" id="headerPauseBtn" title="Pausar o jogo / Menu de Opções (Esc)">
-        <span class="pixel-btn-icon"><svg viewBox="0 0 16 16" width="15" height="15" fill="currentColor"><path d="M2 3h12v2H2zm0 4h12v2H2zm0 4h12v2H2z"/></svg></span> MENU
+    <!-- 3. À Direita: Botão Menu (Amarelo) + Controles de Som e Tela Cheia -->
+    <div class="topbar-section topbar-right">
+      <!-- Botão Menu (Destaque Secundário Amarelo) -->
+      <button class="topbar-btn menu-btn" id="headerPauseBtn" title="Pausar o jogo / Menu (Esc)">
+        <span class="btn-icon"><svg viewBox="0 0 16 16" width="13" height="13" fill="currentColor"><path d="M2 3h12v2H2zm0 4h12v2H2zm0 4h12v2H2z"/></svg></span>
+        <span class="btn-label">MENU</span>
       </button>
 
-      <div class="quick-tools-group">
-        <button class="icon-btn tool-icon-btn" id="audioToggleBtn" title="Ativar/Desativar Sons Retrô 8-bit">
-          <span id="audioIcon" class="pixel-btn-icon"><svg viewBox="0 0 16 16" width="15" height="15" fill="currentColor"><path d="M1 5h3l4-4v14l-4-4H1V5zm9 0h1v6h-1V5zm2-2h1v10h-1V3zm2-2h1v14h-1V1z"/></svg></span> SOM
+      <!-- Grupo de Ações Rápidas (Desktop) -->
+      <div class="desktop-quick-tools" id="desktopQuickTools">
+        <button class="topbar-btn tool-btn audio-btn" id="audioToggleBtn" title="Ativar/Desativar Sons Retrô 8-bit">
+          <span id="audioIcon" class="btn-icon"><svg viewBox="0 0 16 16" width="13" height="13" fill="currentColor"><path d="M1 5h3l4-4v14l-4-4H1V5zm9 0h1v6h-1V5zm2-2h1v10h-1V3zm2-2h1v14h-1V1z"/></svg></span>
+          <span class="btn-label hide-mobile">SOM</span>
         </button>
-        <button class="icon-btn tool-icon-btn" id="passPhoneBtn" title="Passar a vez para o próximo amigo">
-          <span class="pixel-btn-icon"><svg viewBox="0 0 16 16" width="15" height="15" fill="currentColor"><path d="M3 1h3v2H4v2h2v2H1V1h2zm10 0h2v6h-6V5h2V3h-2V1h4zm-7 8h6v6h-2v-2h-2v2H6V9zm-5 6H1V9h6v2H5v2h2v2H1z"/></svg></span> PRÓXIMO
+
+        <button class="topbar-btn tool-btn next-btn" id="passPhoneBtn" title="Passar a vez para o próximo amigo">
+          <span class="btn-icon"><svg viewBox="0 0 16 16" width="13" height="13" fill="currentColor"><path d="M3 1h3v2H4v2h2v2H1V1h2zm10 0h2v6h-6V5h2V3h-2V1h4zm-7 8h6v6h-2v-2h-2v2H6V9zm-5 6H1V9h6v2H5v2h2v2H1z"/></svg></span>
+          <span class="btn-label hide-mobile">PRÓXIMO</span>
         </button>
-        <button class="icon-btn tool-icon-btn" id="headerFullscreenBtn" title="Ativar/Desativar Tela Cheia">
-          <span id="fullscreenIcon" class="pixel-btn-icon"><svg viewBox="0 0 16 16" width="15" height="15" fill="currentColor"><path d="M1 1h5v2H3v3H1V1zm9 0h5v5h-2V3h-3V1zM3 13h3v2H1v-5h2v3zm10-3h2v5h-5v-2h3v-3z"/></svg></span> TELA CHEIA
+
+        <button class="topbar-btn tool-btn fs-btn" id="headerFullscreenBtn" title="Ativar/Desativar Tela Cheia">
+          <span id="fullscreenIcon" class="btn-icon"><svg viewBox="0 0 16 16" width="13" height="13" fill="currentColor"><path d="M1 1h5v2H3v3H1V1zm9 0h5v5h-2V3h-3V1zM3 13h3v2H1v-5h2v3zm10-3h2v5h-5v-2h3v-3z"/></svg></span>
+          <span class="btn-label hide-mobile">TELA CHEIA</span>
         </button>
       </div>
+
+      <!-- Botão Mais Opções no Celular (Menu Compacto Suspenso) -->
+      <button class="topbar-btn mobile-more-btn" id="mobileMoreBtn" title="Mais opções (Som / Tela Cheia)" aria-expanded="false">
+        <span class="btn-icon"><svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor"><circle cx="3" cy="8" r="1.5"/><circle cx="8" cy="8" r="1.5"/><circle cx="13" cy="8" r="1.5"/></svg></span>
+      </button>
+    </div>
+
+    <!-- Dropdown Compacto Suspenso no Celular -->
+    <div class="mobile-dropdown-dock hidden" id="mobileDropdownDock">
+      <button class="dropdown-item" id="mobileAudioToggle">
+        <span id="mobileAudioIcon" class="btn-icon"><svg viewBox="0 0 16 16" width="13" height="13" fill="currentColor"><path d="M1 5h3l4-4v14l-4-4H1V5zm9 0h1v6h-1V5zm2-2h1v10h-1V3zm2-2h1v14h-1V1z"/></svg></span>
+        <span id="mobileAudioLabel">SOM LIGADO</span>
+      </button>
+      <button class="dropdown-item" id="mobilePassPhone">
+        <span class="btn-icon"><svg viewBox="0 0 16 16" width="13" height="13" fill="currentColor"><path d="M3 1h3v2H4v2h2v2H1V1h2zm10 0h2v6h-6V5h2V3h-2V1h4zm-7 8h6v6h-2v-2h-2v2H6V9zm-5 6H1V9h6v2H5v2h2v2H1z"/></svg></span>
+        <span>PASSAR A VEZ</span>
+      </button>
+      <button class="dropdown-item" id="mobileFullscreenToggle">
+        <span class="btn-icon"><svg viewBox="0 0 16 16" width="13" height="13" fill="currentColor"><path d="M1 1h5v2H3v3H1V1zm9 0h5v5h-2V3h-3V1zM3 13h3v2H1v-5h2v3zm10-3h2v5h-5v-2h3v-3z"/></svg></span>
+        <span id="mobileFullscreenLabel">TELA CHEIA</span>
+      </button>
     </div>
   </header>
 
@@ -5250,6 +5495,7 @@
       if (globalLeaderboardList) globalLeaderboardList.style.display = 'flex';
       if (leaderboardList) leaderboardList.style.display = 'none';
       if (charStatsList) charStatsList.style.display = 'none';
+      if (headerGlobalRankBtn) headerGlobalRankBtn.classList.add('selected');
       renderGlobalLeaderboard();
     } else if (tab === 'top') {
       if (tabGlobalOnlineBtn) tabGlobalOnlineBtn.classList.remove('active');
@@ -5258,6 +5504,7 @@
       if (globalLeaderboardList) globalLeaderboardList.style.display = 'none';
       if (leaderboardList) leaderboardList.style.display = 'flex';
       if (charStatsList) charStatsList.style.display = 'none';
+      if (headerGlobalRankBtn) headerGlobalRankBtn.classList.remove('selected');
       renderLeaderboard();
     } else {
       if (tabGlobalOnlineBtn) tabGlobalOnlineBtn.classList.remove('active');
@@ -5266,6 +5513,7 @@
       if (globalLeaderboardList) globalLeaderboardList.style.display = 'none';
       if (leaderboardList) leaderboardList.style.display = 'none';
       if (charStatsList) charStatsList.style.display = 'flex';
+      if (headerGlobalRankBtn) headerGlobalRankBtn.classList.remove('selected');
       renderCharStatsLeaderboard();
     }
   }
@@ -6825,12 +7073,16 @@
     const isFs = !!(document.fullscreenElement || document.webkitFullscreenElement);
     if (headerFullscreenBtn) {
       if (isFs) {
-        headerFullscreenBtn.innerHTML = `<span class="pixel-btn-icon"><svg viewBox="0 0 16 16" width="15" height="15" fill="currentColor"><path d="M5 1h2v4H3v2H1V5h2V3h2V1zm6 0h2v2h2v2h-2v2h-2V5h-2V1h2zm-6 14H3v-2H1v-2h2v2h2v2h2v-2h-2v2zm6 0h-2v-2h2v-2h2v2h2v2h-2v2h-2v-2z"/></svg></span> SAIR FS`;
+        headerFullscreenBtn.innerHTML = `<span class="btn-icon"><svg viewBox="0 0 16 16" width="13" height="13" fill="currentColor"><path d="M5 1h2v4H3v2H1V5h2V3h2V1zm6 0h2v2h2v2h-2v2h-2V5h-2V1h2zm-6 14H3v-2H1v-2h2v2h2v2h2v-2h-2v2zm6 0h-2v-2h2v-2h2v2h2v2h-2v2h-2v-2z"/></svg></span><span class="btn-label hide-mobile">SAIR FS</span>`;
         headerFullscreenBtn.classList.add('active');
       } else {
-        headerFullscreenBtn.innerHTML = `<span class="pixel-btn-icon"><svg viewBox="0 0 16 16" width="15" height="15" fill="currentColor"><path d="M1 1h5v2H3v3H1V1zm9 0h5v5h-2V3h-3V1zM3 13h3v2H1v-5h2v3zm10-3h2v5h-5v-2h3v-3z"/></svg></span> TELA CHEIA`;
+        headerFullscreenBtn.innerHTML = `<span class="btn-icon"><svg viewBox="0 0 16 16" width="13" height="13" fill="currentColor"><path d="M1 1h5v2H3v3H1V1zm9 0h5v5h-2V3h-3V1zM3 13h3v2H1v-5h2v3zm10-3h2v5h-5v-2h3v-3z"/></svg></span><span class="btn-label hide-mobile">TELA CHEIA</span>`;
         headerFullscreenBtn.classList.remove('active');
       }
+    }
+    const mobileFullscreenLabel = document.getElementById('mobileFullscreenLabel');
+    if (mobileFullscreenLabel) {
+      mobileFullscreenLabel.textContent = isFs ? 'SAIR TELA CHEIA' : 'TELA CHEIA';
     }
   }
 
@@ -6839,6 +7091,56 @@
   }
   document.addEventListener('fullscreenchange', updateFullscreenIcon);
   document.addEventListener('webkitfullscreenchange', updateFullscreenIcon);
+
+  // Mobile Dropdown Dock (...) Controls
+  const mobileMoreBtn = document.getElementById('mobileMoreBtn');
+  const mobileDropdownDock = document.getElementById('mobileDropdownDock');
+  const mobileAudioToggle = document.getElementById('mobileAudioToggle');
+  const mobilePassPhone = document.getElementById('mobilePassPhone');
+  const mobileFullscreenToggle = document.getElementById('mobileFullscreenToggle');
+
+  if (mobileMoreBtn && mobileDropdownDock) {
+    mobileMoreBtn.onclick = (e) => {
+      e.stopPropagation();
+      const isHidden = mobileDropdownDock.classList.toggle('hidden');
+      mobileMoreBtn.setAttribute('aria-expanded', String(!isHidden));
+    };
+
+    document.addEventListener('click', (e) => {
+      if (!mobileDropdownDock.classList.contains('hidden') && !mobileDropdownDock.contains(e.target) && e.target !== mobileMoreBtn && !mobileMoreBtn.contains(e.target)) {
+        mobileDropdownDock.classList.add('hidden');
+        mobileMoreBtn.setAttribute('aria-expanded', 'false');
+      }
+    });
+  }
+
+  if (mobileAudioToggle) {
+    mobileAudioToggle.onclick = (e) => {
+      e.stopPropagation();
+      audio.init();
+      const isMuted = audio.toggleMute();
+      updateAudioUi();
+      showToast(isMuted ? 'SOM DESATIVADO' : 'SOM ATIVADO');
+    };
+  }
+
+  if (mobilePassPhone) {
+    mobilePassPhone.onclick = (e) => {
+      e.stopPropagation();
+      if (mobileDropdownDock) mobileDropdownDock.classList.add('hidden');
+      if (mobileMoreBtn) mobileMoreBtn.setAttribute('aria-expanded', 'false');
+      passToNextFriend();
+    };
+  }
+
+  if (mobileFullscreenToggle) {
+    mobileFullscreenToggle.onclick = (e) => {
+      e.stopPropagation();
+      if (mobileDropdownDock) mobileDropdownDock.classList.add('hidden');
+      if (mobileMoreBtn) mobileMoreBtn.setAttribute('aria-expanded', 'false');
+      toggleFullscreen();
+    };
+  }
 
   // Botões de UI
   mainPlayBtn.onclick = () => { sfx.init(); startGame(); };
@@ -6884,8 +7186,21 @@
 
   function updateAudioUi() {
     const isMuted = audio.isMuted;
-    audioIcon.innerHTML = isMuted ? PIXEL_ICONS.soundOff : PIXEL_ICONS.soundOn;
-    audioToggleBtn.title = isMuted ? 'Ativar Sons' : 'Desativar Sons';
+    if (audioIcon) {
+      audioIcon.innerHTML = isMuted ? PIXEL_ICONS.soundOff : PIXEL_ICONS.soundOn;
+    }
+    if (audioToggleBtn) {
+      audioToggleBtn.title = isMuted ? 'Ativar Sons' : 'Desativar Sons';
+      audioToggleBtn.classList.toggle('muted', isMuted);
+    }
+    const mobileAudioIcon = document.getElementById('mobileAudioIcon');
+    const mobileAudioLabel = document.getElementById('mobileAudioLabel');
+    if (mobileAudioIcon) {
+      mobileAudioIcon.innerHTML = isMuted ? PIXEL_ICONS.soundOff : PIXEL_ICONS.soundOn;
+    }
+    if (mobileAudioLabel) {
+      mobileAudioLabel.textContent = isMuted ? 'SOM DESLIGADO' : 'SOM LIGADO';
+    }
     if (pauseMuteBtnLabel) {
       pauseMuteBtnLabel.textContent = isMuted ? 'DESMUTAR' : 'SILENCIAR';
     }
