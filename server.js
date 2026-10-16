@@ -50,7 +50,7 @@ let players = loadJsonSafe(PLAYERS_FILE, {});
 let leaderboard = loadJsonSafe(LEADERBOARD_FILE, [
   { playerId: 'bot_di5', nickname: 'Di5', characterId: 'di5', score: 450, maxLevel: 2, date: '16/10/2026', timestamp: 1729094400000 },
   { playerId: 'bot_wendel', nickname: 'Wendel', characterId: 'wendel', score: 380, maxLevel: 2, date: '16/10/2026', timestamp: 1729094000000 },
-  { playerId: 'bot_muiz', nickname: 'Muiz', characterId: 'muiz', score: 310, maxLevel: 2, date: '16/10/2026', timestamp: 1729093000000 },
+  { playerId: 'bot_muniz', nickname: 'Muniz', characterId: 'muniz', score: 310, maxLevel: 2, date: '16/10/2026', timestamp: 1729093000000 },
   { playerId: 'bot_clarinha', nickname: 'Clarinha', characterId: 'clarinha', score: 290, maxLevel: 1, date: '16/10/2026', timestamp: 1729092000000 },
   { playerId: 'bot_joao', nickname: 'Joao', characterId: 'joao', score: 260, maxLevel: 1, date: '16/10/2026', timestamp: 1729091000000 }
 ]);

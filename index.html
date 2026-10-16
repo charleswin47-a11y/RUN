@@ -1820,6 +1820,15 @@
       projectileSpeed: 15,
       desc: 'Dispara uma bola de futebol em alta velocidade que destrói o obstáculo! (Recarga: 4s)'
     },
+    muniz: {
+      id: 'vasco_spirit',
+      name: 'Espírito do Vasco',
+      type: 'Poder especial',
+      duration: 1.5,
+      cooldown: 6.5,
+      range: 960,
+      desc: 'Invoca o espírito vascaíno que limpa todos os obstáculos da pista! (Recarga: 6.5s)'
+    },
     muiz: {
       id: 'vasco_spirit',
       name: 'Espírito do Vasco',
@@ -1926,6 +1935,7 @@
   const overlayHeading = document.getElementById('overlayHeading');
   const overlayDesc = document.getElementById('overlayDesc');
   const overlayQuote = document.getElementById('overlayQuote');
+  const overlaySkillHighlight = document.getElementById('overlaySkillHighlight');
   const overlaySkillIcon = document.getElementById('overlaySkillIcon');
   const overlaySkillTitle = document.getElementById('overlaySkillTitle');
   const overlaySkillDesc = document.getElementById('overlaySkillDesc');
@@ -2219,8 +2229,8 @@
       noise.stop(now + 0.28);
     }
 
-    // 3. MUIZ: Espírito do Vasco (Grito "VASCOOOO!" com reverberação de estádio)
-    playMuizVasco() {
+    // 3. MUNIZ: Espírito do Vasco (Grito "VASCOOOO!" com reverberação de estádio)
+    playMunizVasco() {
       if (!this.enabled) return;
       this.init();
       if (!this.ctx) return;
@@ -2292,6 +2302,10 @@
       oscSub.start(now);
       osc.stop(now + 0.85);
       oscSub.stop(now + 0.85);
+    }
+
+    playMuizVasco() {
+      this.playMunizVasco();
     }
 
     // 4. JOAO: Carrinho Turbo (Partida + Motor contínuo de Kart + Encerramento suave)
@@ -3151,8 +3165,8 @@
       skillKey: 'wendel'
     },
     {
-      id: 'muiz',
-      name: 'Muiz',
+      id: 'muniz',
+      name: 'Muniz',
       title: 'O Malandro dos Óculos 8-bit',
       hairColor: '#451a03',
       skinColor: '#f1be99',
@@ -3161,7 +3175,7 @@
       accessory: 'sunglasses',
       accColor: '#111827',
       quotes: ['Calma que agora eu peguei o padrão!', 'O pombo fez mira na minha cabeça!'],
-      skillKey: 'muiz'
+      skillKey: 'muniz'
     },
     {
       id: 'joao',
@@ -3287,7 +3301,17 @@
   }
 
   let friends = loadLocal('amigos_run_roster_v3', INITIAL_FRIENDS);
-  // Garante que novos amigos iniciais como Clarinha sejam integrados automaticamente
+  // Garante a migração de Muiz para Muniz se houver no localStorage
+  friends.forEach(f => {
+    if (f.id === 'muiz' || f.name === 'Muiz') {
+      f.id = 'muniz';
+      f.name = 'Muniz';
+      f.skillKey = 'muniz';
+    }
+  });
+  saveLocal('amigos_run_roster_v3', friends);
+
+  // Garante que novos amigos iniciais como Clarinha e Muniz sejam integrados automaticamente
   INITIAL_FRIENDS.forEach(initFriend => {
     if (!friends.some(f => f.id === initFriend.id)) {
       friends.push(initFriend);
@@ -3298,16 +3322,25 @@
   let scores = loadLocal('amigos_run_scores_v3', [
     { name: 'Di5', score: 450, date: '2026-10-16' },
     { name: 'Wendel', score: 380, date: '2026-10-16' },
-    { name: 'Muiz', score: 310, date: '2026-10-16' }
+    { name: 'Muniz', score: 310, date: '2026-10-16' }
   ]);
+  scores.forEach(s => {
+    if (s.name === 'Muiz') s.name = 'Muniz';
+  });
 
   // Estatísticas persistentes por Personagem & Competição entre amigos
   let characterStats = loadLocal('amigos_run_char_stats_v3', {
     di5: { bestScore: 450, matches: 5, obstaclesDestroyed: 12, skillsUsed: 8 },
     wendel: { bestScore: 380, matches: 4, obstaclesDestroyed: 10, skillsUsed: 6 },
-    muiz: { bestScore: 310, matches: 3, obstaclesDestroyed: 7, skillsUsed: 4 },
+    muniz: { bestScore: 310, matches: 3, obstaclesDestroyed: 7, skillsUsed: 4 },
     clarinha: { bestScore: 0, matches: 0, obstaclesDestroyed: 0, skillsUsed: 0 }
   });
+  if (characterStats.muiz && !characterStats.muniz) {
+    characterStats.muniz = characterStats.muiz;
+  }
+  if (!characterStats.muniz) {
+    characterStats.muniz = { bestScore: 310, matches: 3, obstaclesDestroyed: 7, skillsUsed: 4 };
+  }
   if (!characterStats.clarinha) {
     characterStats.clarinha = { bestScore: 0, matches: 0, obstaclesDestroyed: 0, skillsUsed: 0 };
   }
@@ -3622,7 +3655,7 @@
       startSkillCooldown(config.cooldown);
 
     } else if (config.id === 'vasco_spirit') {
-      audio.playMuizVasco();
+      audio.playMunizVasco();
       skillState.isActive = true;
       skillState.activeDuration = config.duration;
       specialEntities.push({
@@ -6090,6 +6123,7 @@
   }
 
   function togglePause() {
+    audio.init();
     if (currentGameState === GAME_STATE.PLAYING) {
       currentGameState = GAME_STATE.PAUSED;
       audio.stopAllContinuous();
@@ -6101,6 +6135,14 @@
       pauseOverlay.classList.add('hidden');
       lastTime = performance.now(); // Previne pulo de física após pausa
       animationFrameId = requestAnimationFrame(gameLoop);
+    } else {
+      // No MENU ou GAME_OVER: abre e fecha o menu de opções / volume
+      if (pauseOverlay.classList.contains('hidden')) {
+        pauseOverlay.classList.remove('hidden');
+        updateAudioUi();
+      } else {
+        pauseOverlay.classList.add('hidden');
+      }
     }
   }
 

@@ -112,7 +112,7 @@ O jogo possui agora um sistema progressivo e equilibrado de 5 níveis de dificul
 | :--- | :--- | :--- | :--- | :--- |
 | **Di5** | **Fumaça Blindada** | Defesa / Escudo | Traga o cigarro e cria escudo roxo-azulado que absorve integralmente 1 impacto de obstáculo! | 7.0s (prep 0.4s) |
 | **Wendel** | **Chuteira Míssil** | Ataque | Dispara bola de futebol veloz (15 px/f) que destrói o obstáculo. | 4.0s |
-| **Muiz** | **Espírito do Vasco** | Especial | Voz sintetizada "VASCOOOO!" com reverberação e fantasma alvinegro que limpa a pista. | 6.5s (dura 1.5s) |
+| **Muniz** | **Espírito do Vasco** | Especial | Voz sintetizada "VASCOOOO!" com reverberação e fantasma alvinegro que limpa a pista. | 6.5s (dura 1.5s) |
 | **Joao** | **Carrinho Turbo** | Mobilidade | Kart turbo (+3.5 vel) com motor contínuo e invulnerabilidade total. | 7.0s (dura 2.8s) |
 | **Douglas** | **Espada** | Combate | Golpe "SHING!" metálico cortante que fatia obstáculos até 180px. | 3.8s (ataque 0.35s) |
 | **Nalu** | **Modo Loira Suprema** | Magia / Buff | Brilho mágico ascendente com sininhos e **pontos x1.5 (+50%)**! | 7.0s (dura 3.8s) |
