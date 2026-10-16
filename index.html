@@ -214,18 +214,20 @@
   /* HUD Superior */
   .arcade-hud {
     position: absolute;
-    top: 8px;
-    left: 10px;
-    right: 10px;
+    top: 6px;
+    left: 8px;
+    right: 8px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
     z-index: 10;
     pointer-events: none;
     font-family: var(--pixel-font);
-    font-size: clamp(8px, 2.1vw, 11px);
+    font-size: clamp(8px, 1.8vw, 10px);
     text-shadow: 2px 2px 0 #000, -1px -1px 0 #000;
+    flex-wrap: nowrap;
+    white-space: nowrap;
   }
 
   .hud-player {
@@ -1252,21 +1254,45 @@
       max-height: 220px;
     }
     .arcade-hud {
-      top: 6px;
-      left: 6px;
-      right: 6px;
-      flex-wrap: wrap;
-      gap: 4px;
+      top: 4px;
+      left: 4px;
+      right: 4px;
+      flex-wrap: nowrap !important;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 3px;
     }
     .skill-hud-card {
-      order: 3;
-      width: 100%;
-      justify-content: center;
-      margin-top: 2px;
-      padding: 3px 6px;
+      display: none !important; /* No mobile a habilidade fica 100% no botão de toque grande inferior sem poluir a tela */
     }
-    .hud-player, .hud-stats {
-      padding: 4px 8px;
+    .hud-player {
+      padding: 3px 6px;
+      font-size: 7.5px;
+      gap: 3px;
+      border-width: 1px;
+    }
+    .p1-hud-tag {
+      font-size: 6px;
+      padding: 1px 3px;
+    }
+    .hud-level-badge {
+      padding: 3px 5px;
+      font-size: 7px;
+      gap: 2px;
+      border-width: 1px;
+    }
+    .hud-stats {
+      padding: 3px 6px;
+      gap: 4px;
+      font-size: 7.5px;
+      border-width: 1px;
+    }
+    .hud-score, .hud-best {
+      gap: 2px;
+    }
+    .game-toast {
+      display: none !important; /* Desativa totalmente toasts durante jogo no celular */
     }
     body {
       padding: 4px 4px 18px;
@@ -3202,6 +3228,8 @@
 
   let toastTimer = null;
   function showToast(text, duration = 2200) {
+    // Nunca bloqueia a visão com notificações no meio do jogo durante a corrida
+    if (currentGameState === GAME_STATE.PLAYING) return;
     gameToast.textContent = text;
     gameToast.classList.add('show');
     clearTimeout(toastTimer);
@@ -5241,6 +5269,8 @@
 
     gameOverlay.classList.add('hidden');
     pauseOverlay.classList.add('hidden');
+    clearTimeout(toastTimer);
+    gameToast.classList.remove('show');
     scoreEl.textContent = '00000';
     updateBestDisplay();
     updateSkillHud();
@@ -5445,9 +5475,6 @@
     // Cooldown e Duração de Skill
     if (skillState.cooldownRemaining > 0) {
       skillState.cooldownRemaining = Math.max(0, skillState.cooldownRemaining - dtSeconds);
-      if (skillState.cooldownRemaining === 0) {
-        showToast('HABILIDADE PRONTA PARA USAR!');
-      }
       updateSkillHud();
     }
 
@@ -5484,7 +5511,6 @@
         audio.playDi5ShieldActivate();
         const currentY = player.isDucking ? (GROUND_Y - player.duckHeight) : player.y;
         particles.emitShieldBreak(player.x + 14, currentY + 16);
-        showToast('FUMAÇA BLINDADA ATIVADA!', 2200);
         player.animState = player.onGround ? ANIM_STATE.RUN : ANIM_STATE.JUMP;
         updateSkillHud();
       }
@@ -5606,7 +5632,6 @@
           particles.emitShieldBreak(player.x + 14, currentY + 16);
           destroyObstacleWithEffect(obs, '#8b5cf6');
           player.invulnerableTimer = 32; // ~0.5s de i-frames para transpor o obstáculo com segurança
-          showToast('ESCUDO ABSORVEU O IMPACTO!', 2500);
           updateSkillHud();
           break; // Corrida continua normalmente!
         }
