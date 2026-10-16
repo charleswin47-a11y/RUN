@@ -1,0 +1,6 @@
+services:
+  - type: web
+    name: amigos-run
+    runtime: static
+    buildCommand: ""
+    staticPublishPath: .
