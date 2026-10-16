@@ -69,11 +69,11 @@
     "bestScore": 220,
     "matchesPlayed": 4
   },
-  "bot_emyli": {
-    "id": "bot_emyli",
-    "secret": "bot_secret_emyli_retro",
-    "nickname": "Emyli",
-    "favoriteChar": "emyli",
+  "bot_emily": {
+    "id": "bot_emily",
+    "secret": "bot_secret_emily_retro",
+    "nickname": "Emily",
+    "favoriteChar": "emily",
     "createdAt": 1729090300000,
     "lastLogin": 1729090300000,
     "bestScore": 200,

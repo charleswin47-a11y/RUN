@@ -55,7 +55,7 @@ let leaderboard = loadJsonSafe(LEADERBOARD_FILE, [
   { playerId: 'bot_joao', nickname: 'Joao', characterId: 'joao', score: 260, maxLevel: 1, date: '16/10/2026', timestamp: 1729091000000 },
   { playerId: 'bot_taynara', nickname: 'Taynara', characterId: 'taynara', score: 240, maxLevel: 1, date: '16/10/2026', timestamp: 1729090500000 },
   { playerId: 'bot_matheus', nickname: 'Matheus', characterId: 'matheus', score: 220, maxLevel: 1, date: '16/10/2026', timestamp: 1729090400000 },
-  { playerId: 'bot_emyli', nickname: 'Emyli', characterId: 'emyli', score: 200, maxLevel: 1, date: '16/10/2026', timestamp: 1729090300000 },
+  { playerId: 'bot_emily', nickname: 'Emily', characterId: 'emily', score: 200, maxLevel: 1, date: '16/10/2026', timestamp: 1729090300000 },
   { playerId: 'bot_lais', nickname: 'Lais', characterId: 'lais', score: 180, maxLevel: 1, date: '16/10/2026', timestamp: 1729090200000 }
 ]);
 
@@ -69,7 +69,7 @@ if (!players || Object.keys(players).length === 0) {
     bot_joao: { id: 'bot_joao', secret: 'bot_secret_joao_retro', nickname: 'Joao', favoriteChar: 'joao', createdAt: 1729091000000, lastLogin: 1729091000000, bestScore: 260, matchesPlayed: 5 },
     bot_taynara: { id: 'bot_taynara', secret: 'bot_secret_taynara_retro', nickname: 'Taynara', favoriteChar: 'taynara', createdAt: 1729090500000, lastLogin: 1729090500000, bestScore: 240, matchesPlayed: 4 },
     bot_matheus: { id: 'bot_matheus', secret: 'bot_secret_matheus_retro', nickname: 'Matheus', favoriteChar: 'matheus', createdAt: 1729090400000, lastLogin: 1729090400000, bestScore: 220, matchesPlayed: 4 },
-    bot_emyli: { id: 'bot_emyli', secret: 'bot_secret_emyli_retro', nickname: 'Emyli', favoriteChar: 'emyli', createdAt: 1729090300000, lastLogin: 1729090300000, bestScore: 200, matchesPlayed: 3 },
+    bot_emily: { id: 'bot_emily', secret: 'bot_secret_emily_retro', nickname: 'Emily', favoriteChar: 'emily', createdAt: 1729090300000, lastLogin: 1729090300000, bestScore: 200, matchesPlayed: 3 },
     bot_lais: { id: 'bot_lais', secret: 'bot_secret_lais_retro', nickname: 'Lais', favoriteChar: 'lais', createdAt: 1729090200000, lastLogin: 1729090200000, bestScore: 180, matchesPlayed: 3 }
   };
   saveJsonAtomic(PLAYERS_FILE, players);

@@ -2269,6 +2269,15 @@
       invulnerable: true,
       desc: 'Desaparece em uma nuvem de fumaça e fica invisível, atravessando obstáculos sem sofrer colisão! (Duração: 3.2s | Recarga: 8.5s)'
     },
+    emily: {
+      id: 'giant_burger',
+      name: 'Hambúrguer Voador',
+      type: 'Ataque à distância',
+      duration: 0,
+      cooldown: 5.0,
+      projectileSpeed: 14,
+      desc: 'Arremessa um hambúrguer gigante artesanal que gira pela pista, atropelando obstáculos com chuva de gergelim, queijo e molho! (Recarga: 5s)'
+    },
     emyli: {
       id: 'giant_burger',
       name: 'Hambúrguer Voador',
@@ -3205,8 +3214,8 @@
       osc.stop(now + 0.18);
     }
 
-    // 14. EMYLI: Hambúrguer Voador (Arremesso pesado & impacto suculento)
-    playEmyliBurger() {
+    // 14. EMILY: Hambúrguer Voador (Arremesso pesado & impacto suculento)
+    playEmilyBurger() {
       if (!this.enabled) return;
       this.init();
       if (!this.ctx) return;
@@ -3222,8 +3231,9 @@
       osc.start(now);
       osc.stop(now + 0.15);
     }
+    playEmyliBurger() { this.playEmilyBurger(); }
 
-    playEmyliBurgerImpact() {
+    playEmilyBurgerImpact() {
       if (!this.enabled) return;
       this.init();
       if (!this.ctx) return;
@@ -3239,6 +3249,7 @@
       osc.start(now);
       osc.stop(now + 0.18);
     }
+    playEmyliBurgerImpact() { this.playEmilyBurgerImpact(); }
 
     // 15. LAIS: Magia (Feitiço arcano com arpejo cintilante e runas cósmicas)
     playLaisMagic(variant = 0) {
@@ -3933,8 +3944,8 @@
       skillKey: 'matheus'
     },
     {
-      id: 'emyli',
-      name: 'Emyli',
+      id: 'emily',
+      name: 'Emily',
       title: 'A Chef dos Hambúrgueres',
       hairColor: '#5c2d16',
       skinColor: '#f5cba7',
@@ -3943,7 +3954,7 @@
       accessory: 'burger_clip',
       accColor: '#f59e0b',
       quotes: ['Vai um hambúrguer artesanal aí?!', 'Arremessei o lanche com cebola e tudo!', 'Pão quentinho atropelando bandido!', 'Quem joga com fome corre mais rápido!'],
-      skillKey: 'emyli'
+      skillKey: 'emily'
     },
     {
       id: 'lais',
@@ -4011,6 +4022,7 @@
     clarinha: { bestScore: 290, matches: 2, obstaclesDestroyed: 5, skillsUsed: 3 },
     taynara: { bestScore: 0, matches: 0, obstaclesDestroyed: 0, skillsUsed: 0 },
     matheus: { bestScore: 0, matches: 0, obstaclesDestroyed: 0, skillsUsed: 0 },
+    emily: { bestScore: 0, matches: 0, obstaclesDestroyed: 0, skillsUsed: 0 },
     emyli: { bestScore: 0, matches: 0, obstaclesDestroyed: 0, skillsUsed: 0 },
     lais: { bestScore: 0, matches: 0, obstaclesDestroyed: 0, skillsUsed: 0 }
   });
@@ -4020,7 +4032,10 @@
   if (!characterStats.muniz) {
     characterStats.muniz = { bestScore: 310, matches: 3, obstaclesDestroyed: 7, skillsUsed: 4 };
   }
-  ['clarinha', 'taynara', 'matheus', 'emyli', 'lais'].forEach(cid => {
+  if (characterStats.emyli && !characterStats.emily) {
+    characterStats.emily = characterStats.emyli;
+  }
+  ['clarinha', 'taynara', 'matheus', 'emily', 'emyli', 'lais'].forEach(cid => {
     if (!characterStats[cid]) {
       characterStats[cid] = { bestScore: 0, matches: 0, obstaclesDestroyed: 0, skillsUsed: 0 };
     }
@@ -4472,7 +4487,7 @@
       showToast('AGORA VOCÊ ME VÊ... AGORA NÃO! 👻');
 
     } else if (config.id === 'giant_burger') {
-      audio.playEmyliBurger();
+      audio.playEmilyBurger();
       projectiles.push({
         type: 'giant_burger',
         x: player.x + 26,
@@ -4919,8 +4934,8 @@
       // Matheus: Corte fade/degradê moderno
       drawPixelRect(targetCtx, x + 5, bodyY - 1 + bodySquashY, 22, 5, hair);
       drawPixelRect(targetCtx, x + 4, bodyY + 3 + bodySquashY, 4, 6, '#1a1008');
-    } else if (friend.id === 'emyli') {
-      // Emyli: Cabelo castanho comprido
+    } else if (friend.id === 'emily' || friend.id === 'emyli') {
+      // Emily: Cabelo castanho comprido
       drawPixelRect(targetCtx, x + 5, bodyY + bodySquashY, 22, 5, hair);
       drawPixelRect(targetCtx, x + 3, bodyY + 3 + bodySquashY, 5, 15, hair);
       drawPixelRect(targetCtx, x + 24, bodyY + 3 + bodySquashY, 5, 14, hair);
@@ -6802,7 +6817,7 @@
           if (!o.destroyed && !p.hitSet.has(o) && p.x + p.w > o.x && p.x < o.x + o.w && p.y + p.h > o.y && p.y < o.y + o.h) {
             p.hitSet.add(o);
             destroyObstacleWithEffect(o, '#f59e0b');
-            audio.playEmyliBurgerImpact();
+            audio.playEmilyBurgerImpact();
             particles.emitBurgerIngredients(o.x + o.w / 2, o.y + o.h / 2);
             screenShake = Math.max(screenShake, 6);
           }
