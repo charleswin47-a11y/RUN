@@ -138,3 +138,61 @@ O jogo possui agora um sistema progressivo e equilibrado de 5 níveis de dificul
 - **Botão `⚡ USAR SKILL`**: Ativação grande com contador de recarga numérico.
 - **Botões `PULAR` e `AGACHAR`**: Controles virtuais ergonômicos abaixo da pista.
 - **Toque no Canvas**: Toque na parte de cima pula, parte de baixo agacha.
+
+---
+
+## 🌐 INFRAESTRUTURA ONLINE: SERVIDOR COMPARTILHADO + PARTIDAS INDIVIDUAIS + RANKING EM TEMPO REAL
+
+O AMIGOS RUN agora conta com um backend completo com persistência atômica, WebSockets em tempo real e sistema anti-cheat!
+
+### 1. Partidas 100% Individuais
+- Cada jogador joga sua própria corrida de forma autônoma.
+- Pausas, mortes e habilidades de um jogador **nunca** interferem nos demais.
+- Física, obstáculos e progressão de velocidade rodam de forma fluida no cliente.
+
+### 2. Identidade Persistente do Jogador
+- Todo jogador recebe um identificador seguro (`playerId` + `playerSecret` criptográfico) salvo no navegador.
+- O jogador pode personalizar seu **Apelido Público** a qualquer momento clicando no botão do cabeçalho ou no painel de ranking.
+- O apelido é validado e sincronizado no servidor central via `POST /api/player/register`.
+
+### 3. Ranking Global em Tempo Real (WebSockets `/ws`)
+- **Aba 🌍 GLOBAL ONLINE**: Mostra os maiores recordes mundiais atualizados em tempo real para todos os jogadores.
+- **Aba 🏆 TOP LOCAL**: Mantém os recordes salvos no dispositivo.
+- **Aba 📊 POR AMIGO**: Estatísticas detalhadas por personagem.
+- **Notificação Flutuante no Topo**: Quando qualquer pessoa no mundo bate um novo recorde, todos os jogadores conectados recebem um banner retrô animado anunciando a conquista!
+- **Contador Online Real**: Exibe a quantidade exata de corredores online conectados simultaneamente.
+
+### 4. Segurança & Proteção Anti-Cheat
+- As partidas utilizam ciclo de vida de sessão:
+  - `POST /api/session/start`: O servidor registra o timestamp de início da corrida.
+  - `POST /api/session/finish`: O servidor valida a coerência física entre a duração real da corrida e a pontuação informada (taxa máxima teórica ~35 pts/s). Tentativas de submissão instantânea de pontos impossíveis são rejeitadas com erro HTTP 400.
+
+---
+
+## 🚀 Como Executar Localmente
+
+```bash
+# 1. Instalar as dependências
+npm install
+
+# 2. Iniciar o servidor
+npm start
+# ou
+node server.js
+
+# 3. Abrir no navegador
+# Acesse http://localhost:3000
+```
+
+Para testar com múltiplos jogadores em tempo real:
+Abra `http://localhost:3000` em dois navegadores diferentes (ou em uma janela anônima). Altere o apelido em cada um e jogue uma partida. Quando um jogador fizer pontuação, o ranking no outro navegador atualizará automaticamente em tempo real sem precisar recarregar a página!
+
+---
+
+## ☁️ Publicação no Render
+
+O projeto está configurado no arquivo `render.yaml` como um serviço Web Node.js nativo compatível com o plano gratuito do Render:
+- **Build Command**: `npm install`
+- **Start Command**: `node server.js`
+- **WebSockets**: Habilitados nativamente na rota `/ws`
+

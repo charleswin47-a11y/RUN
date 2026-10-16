@@ -1297,6 +1297,126 @@
     body {
       padding: 4px 4px 18px;
     }
+    header {
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .header-actions {
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+  }
+
+  /* ESTILOS DE REDE ONLINE, RANKING GLOBAL & IDENTIDADE DO JOGADOR */
+  .online-counter-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(16, 185, 129, 0.16);
+    border: 1px solid rgba(16, 185, 129, 0.55);
+    color: #34d399;
+    padding: 5px 8px;
+    border-radius: 6px;
+    font-family: var(--pixel-font);
+    font-size: 8px;
+    cursor: default;
+    white-space: nowrap;
+    box-shadow: 0 0 10px rgba(16, 185, 129, 0.15);
+  }
+  .online-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #10b981;
+    box-shadow: 0 0 8px #10b981;
+    animation: onlinePulse 1.8s infinite ease-in-out;
+  }
+  @keyframes onlinePulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.35; transform: scale(0.8); }
+  }
+
+  .player-nick-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: rgba(168, 85, 247, 0.2);
+    border: 1px solid var(--accent-purple);
+    color: #f3e8ff;
+    padding: 5px 8px;
+    border-radius: 6px;
+    font-family: var(--pixel-font);
+    font-size: 8px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .player-nick-btn:hover {
+    background: rgba(168, 85, 247, 0.4);
+    border-color: var(--accent-pink);
+    transform: translateY(-1px);
+  }
+
+  .global-record-banner {
+    position: fixed;
+    top: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(135deg, #1d1238 0%, #36154b 100%);
+    border: 2px solid var(--accent-yellow);
+    box-shadow: 0 0 24px rgba(255, 214, 0, 0.45), 0 8px 30px rgba(0, 0, 0, 0.85);
+    padding: 8px 16px;
+    border-radius: 8px;
+    color: #fff;
+    font-family: var(--pixel-font);
+    font-size: 9px;
+    z-index: 999999;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    animation: bannerSlideDown 0.4s ease-out;
+    pointer-events: none;
+    text-align: center;
+    max-width: 90vw;
+  }
+  @keyframes bannerSlideDown {
+    from { transform: translate(-50%, -30px); opacity: 0; }
+    to { transform: translate(-50%, 0); opacity: 1; }
+  }
+
+  .leader-item.is-me {
+    border-color: var(--accent-cyan) !important;
+    background: rgba(0, 240, 255, 0.14) !important;
+    box-shadow: 0 0 10px rgba(0, 240, 255, 0.25) !important;
+  }
+  .me-tag {
+    background: var(--accent-cyan);
+    color: #0e0c18;
+    font-family: var(--pixel-font);
+    font-size: 6.5px;
+    padding: 2px 4px;
+    border-radius: 3px;
+    font-weight: 700;
+    margin-left: 4px;
+  }
+  .char-tag {
+    font-size: 8px;
+    color: var(--text-muted);
+    margin-left: 4px;
+  }
+  .lvl-tag {
+    background: rgba(255, 214, 0, 0.15);
+    color: var(--accent-yellow);
+    border: 1px solid rgba(255, 214, 0, 0.35);
+    font-size: 6.5px;
+    padding: 1px 4px;
+    border-radius: 3px;
+    margin-left: 6px;
+  }
+  .date-tag {
+    font-size: 7px;
+    color: #716986;
+    margin-left: auto;
+    padding-right: 6px;
   }
 </style>
 </head>
@@ -1304,13 +1424,32 @@
 <body>
 <div class="container">
   
-  <!-- Cabeçalho Retrô com Botão de Pausa e Som -->
+  <!-- Notificação Flutuante de Novo Recorde Global em Tempo Real -->
+  <div class="global-record-banner" id="globalRecordBanner" style="display:none;"></div>
+
+  <!-- Cabeçalho Retrô com Status Online, Perfil de Jogador, Pausa e Som -->
   <header>
     <div class="logo-box">
       <div class="logo-badge">V0.3 ADVANCED</div>
       <div class="brand-title">AMIGOS <span>RUN</span></div>
     </div>
     <div class="header-actions">
+      <!-- Indicador Real de Jogadores Conectados -->
+      <div class="online-counter-badge" id="onlineCounterBadge" title="Jogadores conectados no AMIGOS RUN agora">
+        <span class="online-dot"></span> <span id="onlineCountText">1 ONLINE</span>
+      </div>
+
+      <!-- Perfil do Jogador e Apelido Público -->
+      <button class="player-nick-btn" id="playerProfileBtn" title="Alterar seu apelido público no Ranking Global">
+        <span class="pixel-btn-icon"><svg viewBox="0 0 16 16" width="13" height="13" fill="currentColor"><path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm4 8c0-2.2-3.6-3-6-3s-6 .8-6 3v1h12v-1z"/></svg></span>
+        <span id="headerPlayerNick">CORREDOR</span>
+      </button>
+
+      <!-- Atalho Rápido para o Ranking Global -->
+      <button class="icon-btn" id="headerGlobalRankBtn" title="Ir para o Ranking Global">
+        <span class="pixel-btn-icon">🌍</span> RANKING
+      </button>
+
       <button class="icon-btn pause-btn" id="headerPauseBtn" title="Pausar o jogo / Menu (Esc)">
         <span class="pixel-btn-icon"><svg viewBox="0 0 16 16" width="15" height="15" fill="currentColor"><path d="M2 3h12v2H2zm0 4h12v2H2zm0 4h12v2H2z"/></svg></span> MENU
       </button>
@@ -1452,9 +1591,10 @@
           </div>
         </div>
 
-        <!-- Comparativo da Turma (Quem Venceu / Posição no Ranking) -->
+        <!-- Comparativo da Turma e Ranking Global (Quem Venceu / Posição no Ranking) -->
         <div class="match-comparison-box" id="matchComparisonBox" style="display:none;">
           <div class="comparison-leader" id="comparisonLeaderText">🏆 LÍDER DA TURMA: DI5 (450 PTS)</div>
+          <div class="comparison-leader" id="comparisonGlobalRankText" style="color:var(--accent-cyan);margin-top:4px;">🌍 POSIÇÃO NO RANKING GLOBAL: #1 (TOP 1!)</div>
           <div class="comparison-personal" id="comparisonPersonalText">⭐ RECORDE COM ESTE AMIGO: 450 PTS</div>
         </div>
 
@@ -1523,33 +1663,67 @@
       </div>
     </div>
 
-    <!-- Painel 2: Ranking & Recordes da Galera -->
-    <div class="box-card">
+    <!-- Painel 2: Ranking Global Online & Recordes da Galera -->
+    <div class="box-card" id="leaderboardSection">
       <div class="card-header">
-        <h3 class="card-title"><span class="pixel-badge-icon"><svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor"><path d="M1 2h14v2h-2v4c0 2-2 4-5 4v2h4v2H4v-2h4v-2c-3 0-5-2-5-4V4H1V2zm2 2v2h2V4H3zm8 0v2h2V4h-2zm-4 1h2v4H7V5z"/></svg></span> RECORDE DA GALERA</h3>
-        <button class="icon-btn" id="resetLeaderboardBtn" style="padding:4px 8px;font-size:9px;">
-          Zerar
-        </button>
+        <h3 class="card-title"><span class="pixel-badge-icon"><svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor"><path d="M1 2h14v2h-2v4c0 2-2 4-5 4v2h4v2H4v-2h4v-2c-3 0-5-2-5-4V4H1V2zm2 2v2h2V4H3zm8 0v2h2V4h-2zm-4 1h2v4H7V5z"/></svg></span> RANKING &amp; RECORDES</h3>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <span class="online-counter-badge" id="rankingStatusBadge" style="font-size:7px;padding:3px 6px;">🟢 ONLINE</span>
+          <button class="icon-btn" id="openNickModalBtn" style="padding:4px 8px;font-size:9px;">
+            Mudar Nick
+          </button>
+        </div>
       </div>
 
-      <!-- Abas de Alternância: Top Geral vs Recordes por Personagem -->
+      <!-- Abas de Alternância: Ranking Global Online vs Top Local vs Recordes por Personagem -->
       <div class="ranking-tabs">
-        <button class="ranking-tab-btn active" id="tabTopScoresBtn">
-          🏆 TOP GERAL
+        <button class="ranking-tab-btn active" id="tabGlobalOnlineBtn">
+          🌍 GLOBAL ONLINE
+        </button>
+        <button class="ranking-tab-btn" id="tabTopScoresBtn">
+          🏆 TOP LOCAL
         </button>
         <button class="ranking-tab-btn" id="tabCharStatsBtn">
-          📊 RECORDES POR AMIGO
+          📊 POR AMIGO
         </button>
       </div>
       
-      <ol class="leaderboard-list" id="leaderboardList"></ol>
+      <ol class="leaderboard-list" id="globalLeaderboardList"></ol>
+      <ol class="leaderboard-list" id="leaderboardList" style="display:none;"></ol>
       <div class="char-stats-list" id="charStatsList" style="display:none;"></div>
     </div>
 
   </div>
 
+  <!-- Modal Retrô de Edição de Apelido Público -->
+  <div class="pause-overlay hidden" id="nicknameModal">
+    <div class="pause-box" style="max-width:380px;">
+      <h3 class="pause-title" style="color:var(--accent-cyan);">PERFIL DO CORREDOR</h3>
+      <p style="font-size:11px;color:var(--text-muted);margin:0 0 14px;">Defina seu apelido para disputar o ranking online global com todos os jogadores!</p>
+      
+      <div style="margin-bottom:12px;text-align:left;">
+        <label style="font-size:9px;color:var(--accent-yellow);display:block;margin-bottom:6px;font-family:var(--pixel-font);">SEU APELIDO (2 a 14 letras):</label>
+        <input type="text" id="nicknameModalInput" class="input-retro" maxlength="14" style="width:100%;font-size:12px;padding:8px;" placeholder="Ex: Di5, Rayan, Wendel...">
+      </div>
+      
+      <div style="font-size:9px;color:var(--text-muted);margin-bottom:14px;background:rgba(0,0,0,0.3);padding:6px 8px;border-radius:6px;border:1px solid #332a4e;">
+        <div>ID Persistente: <b id="nicknameModalPlayerId" style="color:var(--accent-pink);font-family:monospace;">---</b></div>
+        <div style="margin-top:2px;">Seus recordes são salvos com segurança neste ID.</div>
+      </div>
+
+      <div class="pause-actions" style="display:flex;gap:8px;">
+        <button class="btn-arcade" id="nicknameSaveBtn" style="flex:1;">
+          SALVAR APELIDO
+        </button>
+        <button class="btn-arcade secondary" id="nicknameCancelBtn" style="flex:1;">
+          FECHAR
+        </button>
+      </div>
+    </div>
+  </div>
+
   <footer>
-    AMIGOS RUN V0.3 · ANIMAÇÕES POR ESTADO, PARTÍCULAS, BALANCEAMENTO E UX · FEITO PARA A TURMA
+    AMIGOS RUN V0.3 · SERVIDOR COMPARTILHADO + PARTIDAS INDIVIDUAIS + RANKING GLOBAL EM TEMPO REAL
   </footer>
 
 </div>
@@ -1792,9 +1966,27 @@
   const matchComparisonBox = document.getElementById('matchComparisonBox');
   const comparisonLeaderText = document.getElementById('comparisonLeaderText');
   const comparisonPersonalText = document.getElementById('comparisonPersonalText');
+  const comparisonGlobalRankText = document.getElementById('comparisonGlobalRankText');
+  const tabGlobalOnlineBtn = document.getElementById('tabGlobalOnlineBtn');
   const tabTopScoresBtn = document.getElementById('tabTopScoresBtn');
   const tabCharStatsBtn = document.getElementById('tabCharStatsBtn');
   const charStatsList = document.getElementById('charStatsList');
+  const globalLeaderboardList = document.getElementById('globalLeaderboardList');
+  const onlineCounterBadge = document.getElementById('onlineCounterBadge');
+  const onlineCountText = document.getElementById('onlineCountText');
+  const playerProfileBtn = document.getElementById('playerProfileBtn');
+  const headerPlayerNick = document.getElementById('headerPlayerNick');
+  const headerGlobalRankBtn = document.getElementById('headerGlobalRankBtn');
+  const openNickModalBtn = document.getElementById('openNickModalBtn');
+  const rankingStatusBadge = document.getElementById('rankingStatusBadge');
+  const leaderboardSection = document.getElementById('leaderboardSection');
+  const nicknameModal = document.getElementById('nicknameModal');
+  const nicknameModalInput = document.getElementById('nicknameModalInput');
+  const nicknameModalPlayerId = document.getElementById('nicknameModalPlayerId');
+  const nicknameSaveBtn = document.getElementById('nicknameSaveBtn');
+  const nicknameCancelBtn = document.getElementById('nicknameCancelBtn');
+  const globalRecordBanner = document.getElementById('globalRecordBanner');
+
 
   // Widget HUD de Skill
   const skillHudIcon = document.getElementById('skillHudIcon');
@@ -3129,7 +3321,22 @@
     startTime: 0
   };
 
-  let activeLeaderboardTab = 'top'; // 'top' ou 'chars'
+  let activeLeaderboardTab = 'global'; // 'global', 'top' ou 'chars'
+  let onlineSocket = null;
+  let socketReconnectTimer = null;
+  let fallbackPollingTimer = null;
+  let globalLeaderboardData = [];
+  let topByCharacterData = {};
+  let currentSessionId = null;
+  let globalRecordBannerTimer = null;
+
+  let playerProfile = {
+    playerId: localStorage.getItem('amigos_run_player_id') || '',
+    playerSecret: localStorage.getItem('amigos_run_player_secret') || '',
+    nickname: localStorage.getItem('amigos_run_player_nickname') || '',
+    bestScore: 0,
+    globalRank: null
+  };
 
   // SISTEMA INTERNO DE NÍVEIS DE DIFICULDADE EQUILIBRADA
   const GAME_LEVELS = [
@@ -4566,25 +4773,365 @@
     });
   }
 
+  // --------------------------------------------------------------------------
+  // SISTEMA ONLINE, RANKING GLOBAL COMPARTILHADO & REAL-TIME WEBSOCKET
+  // --------------------------------------------------------------------------
+  function updatePlayerProfileUi() {
+    const nick = playerProfile.nickname || 'Corredor';
+    if (headerPlayerNick) headerPlayerNick.textContent = nick.toUpperCase();
+    if (nicknameModalPlayerId) {
+      nicknameModalPlayerId.textContent = playerProfile.playerId ? playerProfile.playerId.slice(0, 16) + '...' : '---';
+    }
+    if (nicknameModalInput) {
+      nicknameModalInput.value = playerProfile.nickname || '';
+    }
+  }
+
+  function updateOnlineStatus(isOnline) {
+    if (rankingStatusBadge) {
+      rankingStatusBadge.innerHTML = isOnline ? '🟢 ONLINE' : '🔴 OFFLINE';
+      rankingStatusBadge.style.borderColor = isOnline ? 'rgba(16, 185, 129, 0.55)' : '#ef4444';
+      rankingStatusBadge.style.color = isOnline ? '#34d399' : '#f87171';
+    }
+  }
+
+  function updateOnlineCount(count) {
+    if (onlineCountText) {
+      const c = Math.max(1, count || 1);
+      onlineCountText.textContent = `${c} ${c === 1 ? 'ONLINE' : 'ONLINE'}`;
+    }
+  }
+
+  async function registerPlayer(nicknameOverride = null) {
+    const storedId = localStorage.getItem('amigos_run_player_id') || '';
+    const storedSecret = localStorage.getItem('amigos_run_player_secret') || '';
+    const storedNick = nicknameOverride || localStorage.getItem('amigos_run_player_nickname') || `Corredor_${Math.floor(100 + Math.random() * 900)}`;
+
+    try {
+      const res = await fetch('/api/player/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          playerId: storedId || undefined,
+          playerSecret: storedSecret || undefined,
+          nickname: storedNick,
+          favoriteChar: getCurrentFriend() ? getCurrentFriend().id : 'di5'
+        })
+      });
+      const data = await res.json();
+      if (data && data.success && data.player) {
+        playerProfile.playerId = data.player.playerId;
+        playerProfile.playerSecret = data.player.playerSecret;
+        playerProfile.nickname = data.player.nickname;
+        playerProfile.bestScore = data.player.bestScore;
+        playerProfile.globalRank = data.player.globalRank;
+
+        localStorage.setItem('amigos_run_player_id', playerProfile.playerId);
+        localStorage.setItem('amigos_run_player_secret', playerProfile.playerSecret);
+        localStorage.setItem('amigos_run_player_nickname', playerProfile.nickname);
+
+        updatePlayerProfileUi();
+        if (activeLeaderboardTab === 'global') {
+          renderGlobalLeaderboard();
+        }
+      }
+    } catch (err) {
+      console.warn('[Online] Servidor indisponível no momento, usando modo local:', err);
+      if (!playerProfile.playerId) {
+        playerProfile.playerId = storedId || 'local_' + Date.now();
+        playerProfile.playerSecret = storedSecret || 'local_secret';
+        playerProfile.nickname = storedNick;
+        updatePlayerProfileUi();
+      }
+    }
+  }
+
+  function showGlobalRecordBanner(record) {
+    if (!globalRecordBanner) return;
+    const isMe = record.playerId === playerProfile.playerId;
+    const charObj = friends.find(f => f.id === record.characterId) || { name: record.characterId || 'Corredor' };
+    globalRecordBanner.innerHTML = `
+      <span style="font-size:16px;">${record.isNewGlobalLeader ? '👑' : '⚡'}</span>
+      <div style="text-align:left;">
+        <div style="color:var(--accent-yellow);font-weight:bold;font-size:8.5px;">
+          ${isMe ? '⭐ VOCÊ ATINGIU UM NOVO RECORDE!' : `👑 ${record.nickname.toUpperCase()} BATEU NOVO RECORDE!`}
+        </div>
+        <div style="font-size:7.5px;color:#e9d5ff;margin-top:2px;">
+          ${record.score} PTS · #${record.rank} GLOBAL · COM ${charObj.name.toUpperCase()}
+        </div>
+      </div>
+    `;
+    globalRecordBanner.style.display = 'flex';
+    if (record.isNewGlobalLeader) {
+      audio.playNewRecord();
+    } else {
+      audio.playMilestone();
+    }
+    clearTimeout(globalRecordBannerTimer);
+    globalRecordBannerTimer = setTimeout(() => {
+      globalRecordBanner.style.display = 'none';
+    }, 5500);
+  }
+
+  function connectWebSocket() {
+    if (socketReconnectTimer) {
+      clearTimeout(socketReconnectTimer);
+      socketReconnectTimer = null;
+    }
+
+    try {
+      const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+      const wsUrl = `${protocol}//${window.location.host}/ws`;
+      onlineSocket = new WebSocket(wsUrl);
+
+      onlineSocket.onopen = () => {
+        updateOnlineStatus(true);
+      };
+
+      onlineSocket.onmessage = (event) => {
+        try {
+          const msg = JSON.parse(event.data);
+          if (msg.type === 'INIT') {
+            if (msg.data) {
+              globalLeaderboardData = msg.data.leaderboard || [];
+              topByCharacterData = msg.data.topByCharacter || {};
+              updateOnlineCount(msg.data.onlineCount || 1);
+              if (activeLeaderboardTab === 'global') {
+                renderGlobalLeaderboard();
+              }
+            }
+          } else if (msg.type === 'ONLINE_COUNT') {
+            updateOnlineCount(msg.data && msg.data.count);
+          } else if (msg.type === 'NEW_RECORD') {
+            if (msg.data) {
+              showGlobalRecordBanner(msg.data);
+            }
+          } else if (msg.type === 'LEADERBOARD_UPDATE') {
+            if (msg.data) {
+              globalLeaderboardData = msg.data.leaderboard || [];
+              topByCharacterData = msg.data.topByCharacter || {};
+              if (activeLeaderboardTab === 'global') {
+                renderGlobalLeaderboard();
+              }
+            }
+          }
+        } catch (e) {
+          console.error('[WS] Erro ao decodificar:', e);
+        }
+      };
+
+      onlineSocket.onclose = () => {
+        updateOnlineStatus(false);
+        socketReconnectTimer = setTimeout(connectWebSocket, 4000);
+      };
+
+      onlineSocket.onerror = () => {
+        if (onlineSocket) {
+          try { onlineSocket.close(); } catch (_) {}
+        }
+      };
+    } catch (err) {
+      updateOnlineStatus(false);
+      socketReconnectTimer = setTimeout(connectWebSocket, 5000);
+    }
+  }
+
+  async function fetchGlobalLeaderboard() {
+    try {
+      const res = await fetch('/api/leaderboard?limit=30');
+      const data = await res.json();
+      if (data && data.success) {
+        globalLeaderboardData = data.topGlobal || [];
+        topByCharacterData = data.topByCharacter || {};
+        updateOnlineCount(data.onlinePlayers || 1);
+        updateOnlineStatus(true);
+        if (activeLeaderboardTab === 'global') {
+          renderGlobalLeaderboard();
+        }
+      }
+    } catch (err) {
+      console.warn('[Online] Polling de leaderboard indisponível:', err);
+      updateOnlineStatus(false);
+    }
+  }
+
+  function renderGlobalLeaderboard() {
+    if (!globalLeaderboardList) return;
+    globalLeaderboardList.innerHTML = '';
+
+    if (!globalLeaderboardData || !globalLeaderboardData.length) {
+      globalLeaderboardList.innerHTML = '<li class="empty-leaderboard">Carregando o ranking global online... Seja o primeiro campeão!</li>';
+      return;
+    }
+
+    globalLeaderboardData.forEach((item, index) => {
+      const li = document.createElement('li');
+      const isMe = playerProfile.playerId && item.playerId === playerProfile.playerId;
+      li.className = `leader-item ${isMe ? 'is-me' : ''}`;
+
+      const rankBadge = document.createElement('span');
+      const rank = item.rank || index + 1;
+      rankBadge.className = `leader-rank-badge ${rank === 1 ? 'rank-1st' : rank === 2 ? 'rank-2nd' : rank === 3 ? 'rank-3rd' : 'rank-other'}`;
+      rankBadge.textContent = rank === 1 ? '1ST' : rank === 2 ? '2ND' : rank === 3 ? '3RD' : `#${rank}`;
+
+      const nameBox = document.createElement('span');
+      nameBox.className = 'leader-name';
+      
+      const charObj = friends.find(f => f.id === item.characterId) || { name: item.characterId || 'Corredor' };
+      const meHtml = isMe ? '<span class="me-tag">VOCÊ</span>' : '';
+      const charHtml = `<span class="char-tag">(${charObj.name})</span>`;
+      const lvlHtml = item.maxLevel ? `<span class="lvl-tag">NV${item.maxLevel}</span>` : '';
+
+      nameBox.innerHTML = `${item.nickname || 'Anônimo'} ${meHtml}${charHtml}${lvlHtml}`;
+
+      const dots = document.createElement('span');
+      dots.className = 'leader-dots';
+
+      const dateBox = document.createElement('span');
+      dateBox.className = 'date-tag';
+      dateBox.textContent = item.date || '';
+
+      const scoreBox = document.createElement('span');
+      scoreBox.className = 'leader-score';
+      scoreBox.textContent = `${item.score} PTS`;
+
+      li.append(rankBadge, nameBox, dots, dateBox, scoreBox);
+      globalLeaderboardList.appendChild(li);
+    });
+  }
+
+  async function startOnlineSession() {
+    currentSessionId = null;
+    if (!playerProfile.playerId) return;
+    try {
+      const res = await fetch('/api/session/start', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          playerId: playerProfile.playerId,
+          playerSecret: playerProfile.playerSecret,
+          characterId: getCurrentFriend().id
+        })
+      });
+      const data = await res.json();
+      if (data && data.success) {
+        currentSessionId = data.sessionId;
+      }
+    } catch (err) {
+      console.warn('[Online] Erro ao iniciar sessão:', err);
+    }
+  }
+
+  async function finishOnlineSession(finalScore, curLvl, stats) {
+    if (!playerProfile.playerId || !currentSessionId) return;
+    try {
+      const res = await fetch('/api/session/finish', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          sessionId: currentSessionId,
+          playerId: playerProfile.playerId,
+          playerSecret: playerProfile.playerSecret,
+          score: finalScore,
+          maxLevel: curLvl.level,
+          characterId: getCurrentFriend().id,
+          obstaclesPassed: stats.obstaclesPassed,
+          obstaclesDestroyed: stats.obstaclesDestroyed,
+          skillsUsed: stats.skillsUsed
+        })
+      });
+      const data = await res.json();
+      if (data && data.success) {
+        if (comparisonGlobalRankText) {
+          const rankStr = data.globalRank ? `#${data.globalRank}` : 'TOP 100';
+          const leaderBonus = data.isNewGlobalLeader ? ' 👑 NOVO LÍDER MUNDIAL!' : '';
+          comparisonGlobalRankText.innerHTML = `🌍 RANKING GLOBAL: <b style="color:var(--accent-yellow);">${rankStr}</b> (${data.totalRecords || 1} jogadores)${leaderBonus}`;
+          comparisonGlobalRankText.style.display = 'block';
+        }
+        fetchGlobalLeaderboard();
+      }
+    } catch (err) {
+      console.warn('[Online] Erro ao registrar pontuação no servidor:', err);
+    }
+  }
+
   function setLeaderboardTab(tab) {
     activeLeaderboardTab = tab;
-    if (tab === 'top') {
+    if (tab === 'global') {
+      if (tabGlobalOnlineBtn) tabGlobalOnlineBtn.classList.add('active');
+      if (tabTopScoresBtn) tabTopScoresBtn.classList.remove('active');
+      if (tabCharStatsBtn) tabCharStatsBtn.classList.remove('active');
+      if (globalLeaderboardList) globalLeaderboardList.style.display = 'flex';
+      if (leaderboardList) leaderboardList.style.display = 'none';
+      if (charStatsList) charStatsList.style.display = 'none';
+      renderGlobalLeaderboard();
+    } else if (tab === 'top') {
+      if (tabGlobalOnlineBtn) tabGlobalOnlineBtn.classList.remove('active');
       if (tabTopScoresBtn) tabTopScoresBtn.classList.add('active');
       if (tabCharStatsBtn) tabCharStatsBtn.classList.remove('active');
+      if (globalLeaderboardList) globalLeaderboardList.style.display = 'none';
       if (leaderboardList) leaderboardList.style.display = 'flex';
       if (charStatsList) charStatsList.style.display = 'none';
       renderLeaderboard();
     } else {
+      if (tabGlobalOnlineBtn) tabGlobalOnlineBtn.classList.remove('active');
       if (tabTopScoresBtn) tabTopScoresBtn.classList.remove('active');
       if (tabCharStatsBtn) tabCharStatsBtn.classList.add('active');
+      if (globalLeaderboardList) globalLeaderboardList.style.display = 'none';
       if (leaderboardList) leaderboardList.style.display = 'none';
       if (charStatsList) charStatsList.style.display = 'flex';
       renderCharStatsLeaderboard();
     }
   }
 
+  function openNicknameModal() {
+    if (!nicknameModal) return;
+    updatePlayerProfileUi();
+    nicknameModal.classList.remove('hidden');
+    if (nicknameModalInput) {
+      nicknameModalInput.focus();
+      nicknameModalInput.select();
+    }
+  }
+
+  function closeNicknameModal() {
+    if (nicknameModal) nicknameModal.classList.add('hidden');
+  }
+
+  async function saveNickname() {
+    const raw = nicknameModalInput ? nicknameModalInput.value.trim() : '';
+    if (!raw || raw.length < 2) {
+      alert('O apelido deve ter pelo menos 2 caracteres.');
+      return;
+    }
+    await registerPlayer(raw);
+    closeNicknameModal();
+    showToast(`APELIDO SALVO: ${playerProfile.nickname.toUpperCase()}!`);
+  }
+
+  if (tabGlobalOnlineBtn) tabGlobalOnlineBtn.onclick = () => setLeaderboardTab('global');
   if (tabTopScoresBtn) tabTopScoresBtn.onclick = () => setLeaderboardTab('top');
   if (tabCharStatsBtn) tabCharStatsBtn.onclick = () => setLeaderboardTab('chars');
+
+  if (playerProfileBtn) playerProfileBtn.onclick = openNicknameModal;
+  if (openNickModalBtn) openNickModalBtn.onclick = openNicknameModal;
+  if (nicknameCancelBtn) nicknameCancelBtn.onclick = closeNicknameModal;
+  if (nicknameSaveBtn) nicknameSaveBtn.onclick = saveNickname;
+  if (nicknameModalInput) {
+    nicknameModalInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') saveNickname();
+      if (e.key === 'Escape') closeNicknameModal();
+    });
+  }
+
+  if (headerGlobalRankBtn) {
+    headerGlobalRankBtn.onclick = () => {
+      setLeaderboardTab('global');
+      if (leaderboardSection) {
+        leaderboardSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    };
+  }
 
   function handleAddNewFriend() {
     const name = addFriendInput.value.trim();
@@ -5495,6 +6042,9 @@
       startTime: performance.now()
     };
 
+    // Inicia sessão online persistente no backend (anti-cheat & validação)
+    startOnlineSession();
+
     player.y = GROUND_Y - player.standHeight;
     player.vy = 0;
     player.onGround = true;
@@ -5698,7 +6248,14 @@
       if (comparisonPersonalText) {
         comparisonPersonalText.textContent = `⭐ RECORDE COM ${currentFriend.name.toUpperCase()}: ${characterStats[charKey].bestScore} PTS`;
       }
+      if (comparisonGlobalRankText) {
+        comparisonGlobalRankText.innerHTML = `🌍 Sincronizando pontuação com o Ranking Global...`;
+        comparisonGlobalRankText.style.display = 'block';
+      }
     }
+
+    // Envia resultado para validação anti-cheat e ranking global em tempo real
+    finishOnlineSession(finalScore, curLvl, matchStats);
 
     if (overlaySkillHighlight) overlaySkillHighlight.style.display = 'none';
     if (overlayQuote) overlayQuote.style.display = 'none';
@@ -6187,12 +6744,21 @@
     }
   };
 
-  // Inicialização
+  // Inicialização do Jogo e do Sistema Online Global
   updateAudioUi();
   renderFriendsCarousel();
-  renderLeaderboard();
+  setLeaderboardTab('global');
+  updatePlayerProfileUi();
   onFriendSelected();
   draw();
+
+  // Conexão e sincronização do servidor online
+  registerPlayer();
+  connectWebSocket();
+  fetchGlobalLeaderboard();
+
+  // Polling de fallback a cada 25s
+  fallbackPollingTimer = setInterval(fetchGlobalLeaderboard, 25000);
 
 })();
 </script>
