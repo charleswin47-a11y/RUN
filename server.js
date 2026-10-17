@@ -622,12 +622,6 @@ wss.on('connection', async (ws, req) => {
       if (msg.type === 'IDENTIFY' && msg.data && msg.data.playerId) {
         onlineTracker.identifyPlayer(session.connectionId, msg.data.playerId);
         broadcastOnlineCount();
-        if (msg.data.nickname) {
-          const joinNotice = chatManager.handlePlayerJoin(msg.data.playerId, msg.data.nickname);
-          if (joinNotice) {
-            broadcastMessage('CHAT_MESSAGE', joinNotice);
-          }
-        }
       } else if (msg.type === 'PING') {
         onlineTracker.handlePong(session.connectionId);
         ws.send(JSON.stringify({ type: 'PONG', timestamp: Date.now() }));

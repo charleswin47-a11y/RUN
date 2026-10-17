@@ -178,5 +178,45 @@
     "lastLogin": 1792195750880,
     "bestScore": 0,
     "matchesPlayed": 0
+  },
+  "0d426e8d-2a2d-48f3-9ac1-0b0a3a9fb72b": {
+    "id": "0d426e8d-2a2d-48f3-9ac1-0b0a3a9fb72b",
+    "secret": "3aa9063db22fc8e1621a5a81beb690cf62824404a1eaf366",
+    "nickname": "Jogador Alfa",
+    "favoriteChar": "di5",
+    "createdAt": 1792196573295,
+    "lastLogin": 1792196573295,
+    "bestScore": 45,
+    "matchesPlayed": 1
+  },
+  "0e7eec83-3eea-44d7-a1e8-20672427ed9d": {
+    "id": "0e7eec83-3eea-44d7-a1e8-20672427ed9d",
+    "secret": "7b2e3a37551c4fb765a32e554046961f3136cbc69ab2861e",
+    "nickname": "Jogador Beta",
+    "favoriteChar": "di5",
+    "createdAt": 1792196573302,
+    "lastLogin": 1792196573302,
+    "bestScore": 0,
+    "matchesPlayed": 0
+  },
+  "0d5680ec-01ad-4c8e-9bfc-633752a73567": {
+    "id": "0d5680ec-01ad-4c8e-9bfc-633752a73567",
+    "secret": "2e64d83dbe530879b9821c6c263a9c789cfa66465599018a",
+    "nickname": "Jogador Alfa",
+    "favoriteChar": "di5",
+    "createdAt": 1792197818033,
+    "lastLogin": 1792197818033,
+    "bestScore": 45,
+    "matchesPlayed": 1
+  },
+  "5213676d-e24e-4143-8b3e-36ddcc0e0c82": {
+    "id": "5213676d-e24e-4143-8b3e-36ddcc0e0c82",
+    "secret": "bcd56de97ad29984251cb7a35e51fc06d7696d78b681f523",
+    "nickname": "Jogador Beta",
+    "favoriteChar": "di5",
+    "createdAt": 1792197818040,
+    "lastLogin": 1792197818040,
+    "bestScore": 0,
+    "matchesPlayed": 0
   }
 }

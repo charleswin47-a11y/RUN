@@ -1898,37 +1898,42 @@
   .chat-msg-row.system {
     align-self: center;
     max-width: 100%;
-    width: 100%;
+    width: auto;
+    margin: 2px auto;
   }
 
   /* Bolha de Mensagem */
   .chat-msg-bubble {
-    padding: 6px 9px;
-    border-radius: 8px;
+    padding: 5px 9px;
+    border-radius: 6px;
     font-size: 11px;
     word-break: break-word;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.45);
     position: relative;
   }
   .chat-msg-row.mine .chat-msg-bubble {
-    background: linear-gradient(135deg, rgba(76, 29, 149, 0.5) 0%, rgba(124, 58, 237, 0.4) 100%);
-    border: 1px solid #8b5cf6;
+    background: #251642;
+    border: 1px solid #7c3aed;
+    border-right: 3px solid #c084fc;
     border-top-right-radius: 2px;
   }
   .chat-msg-row.other .chat-msg-bubble {
-    background: #19122c;
-    border: 1px solid #3d2d60;
+    background: #150f25;
+    border: 1px solid #362654;
+    border-left: 3px solid var(--accent-cyan);
     border-top-left-radius: 2px;
   }
   .chat-msg-row.system .chat-msg-bubble {
-    width: 100%;
     background: rgba(255, 214, 0, 0.08);
-    border: 1px dashed rgba(255, 214, 0, 0.35);
-    color: #ffd600;
+    border: 1px solid rgba(255, 214, 0, 0.28);
+    color: #facc15;
     text-align: center;
-    font-size: 9px;
-    padding: 6px 8px;
-    border-radius: 6px;
+    font-size: 8px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-family: var(--pixel-font);
+    line-height: 1.35;
+    box-shadow: none;
   }
 
   /* Metadados da Mensagem */
@@ -2107,15 +2112,8 @@
       pointer-events: auto;
     }
     .chat-drawer-backdrop {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.65);
-      backdrop-filter: blur(2px);
-      z-index: 9999;
-      display: none;
-    }
-    .chat-drawer-backdrop.active {
-      display: block;
+      display: none !important;
+      pointer-events: none !important;
     }
   }
 </style>
@@ -6367,10 +6365,10 @@
       const isOpen = tropaChatPanel.classList.contains('mobile-open');
       if (isOpen) {
         tropaChatPanel.classList.remove('mobile-open');
-        if (chatBackdrop) chatBackdrop.classList.remove('active');
+        if (chatTextInput) chatTextInput.blur();
+        window.focus();
       } else {
         tropaChatPanel.classList.add('mobile-open');
-        if (chatBackdrop) chatBackdrop.classList.add('active');
         clearUnreadChat();
         if (chatTextInput) chatTextInput.focus();
       }
@@ -6378,11 +6376,23 @@
       const isCollapsed = tropaChatPanel.classList.toggle('collapsed');
       if (chatCollapseBtn) {
         chatCollapseBtn.textContent = isCollapsed ? '▶' : '◀';
+        chatCollapseBtn.title = isCollapsed ? 'Expandir Chat da Tropa' : 'Recolher Chat da Tropa';
       }
-      if (!isCollapsed) {
+      if (isCollapsed) {
+        if (chatTextInput) chatTextInput.blur();
+        window.focus();
+      } else {
         clearUnreadChat();
         if (chatTextInput) chatTextInput.focus();
       }
+    }
+
+    if (isChatCollapsed()) {
+      if (chatTextInput) chatTextInput.blur();
+      if (document.activeElement && typeof document.activeElement.blur === 'function') {
+        document.activeElement.blur();
+      }
+      window.focus();
     }
   }
 
@@ -8767,11 +8777,22 @@
    * CONTROLES & EVENTOS
    */
   window.addEventListener('keydown', (e) => {
-    // Se o usuário estiver digitando em campo de texto, não interceptar as teclas do jogo (S, X, W, E, Espaço, etc.)
-    const targetTag = e.target ? (e.target.tagName || '').toUpperCase() : '';
-    if (targetTag === 'INPUT' || targetTag === 'TEXTAREA' || (e.target && e.target.isContentEditable)) {
+    // Se o chat estiver fechado/recolhido e o cursor ainda estiver preso nele, desfoque imediatamente
+    if (chatTextInput && (isChatCollapsed() || chatTextInput.offsetParent === null)) {
+      if (document.activeElement === chatTextInput) {
+        chatTextInput.blur();
+      }
+    }
+
+    // Se o usuário estiver ativamente digitando em campo de texto, não interceptar as teclas do jogo (S, X, W, E, Espaço, etc.)
+    const activeEl = document.activeElement;
+    if (activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA' || activeEl.isContentEditable)) {
       if (e.code === 'Escape') {
-        closeNicknameModal();
+        activeEl.blur();
+        window.focus();
+        if (nicknameModal && !nicknameModal.classList.contains('hidden')) {
+          closeNicknameModal();
+        }
       }
       return;
     }
@@ -8797,14 +8818,23 @@
   });
 
   window.addEventListener('keyup', (e) => {
-    const targetTag = e.target ? (e.target.tagName || '').toUpperCase() : '';
-    if (targetTag === 'INPUT' || targetTag === 'TEXTAREA' || (e.target && e.target.isContentEditable)) {
+    const activeEl = document.activeElement;
+    if (activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA' || activeEl.isContentEditable)) {
       return;
     }
 
     if (['ArrowDown', 'KeyS'].includes(e.code)) {
       e.preventDefault();
       setDucking(false);
+    }
+  });
+
+  // Ao clicar em qualquer lugar da tela do jogo ou canvas, garante o foco imediato nos controles da corrida
+  document.addEventListener('pointerdown', (e) => {
+    if (tropaChatPanel && !tropaChatPanel.contains(e.target) && headerChatToggleBtn && !headerChatToggleBtn.contains(e.target)) {
+      if (chatTextInput && document.activeElement === chatTextInput) {
+        chatTextInput.blur();
+      }
     }
   });
 
