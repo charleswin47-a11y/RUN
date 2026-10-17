@@ -495,6 +495,119 @@ function broadcastOnlineCount() {
   });
 }
 
+// ----------------------------------------------------------------------------
+// CHAT GLOBAL ONLINE — CHAT DA TROPA (PC STUDIOS)
+// ----------------------------------------------------------------------------
+const VALID_CHARACTERS = new Set([
+  'di5', 'wendel', 'muniz', 'clarinha', 'joao', 'douglas',
+  'nalu', 'beatriz', 'vitor', 'julya', 'junior', 'taynara',
+  'matheus', 'emily', 'lais'
+]);
+
+class ChatManager {
+  constructor(maxHistory = 50) {
+    this.maxHistory = maxHistory;
+    this.messages = [];
+    this.rateLimiter = new Map(); // playerId -> [timestamps]
+    this.lastUserMsg = new Map(); // playerId -> { text, time }
+    this.joinAnnouncements = new Map(); // playerId -> timestamp
+
+    // Mensagem de boas-vindas inicial no histórico
+    this.addSystemNotice('🎮 Bem-vindo ao CHAT DA TROPA de A Grande Família Game! Conversem em tempo real com toda a comunidade online!');
+  }
+
+  getHistory() {
+    return [...this.messages];
+  }
+
+  addMessage({ playerId, nickname, characterId, text }) {
+    if (!text || typeof text !== 'string') {
+      throw new Error('A mensagem não pode ser vazia.');
+    }
+
+    const cleanText = text.trim();
+    if (cleanText.length === 0) {
+      throw new Error('A mensagem não pode conter apenas espaços.');
+    }
+
+    if (cleanText.length > 250) {
+      throw new Error('A mensagem excede o limite máximo de 250 caracteres.');
+    }
+
+    const id = playerId || 'anon';
+    const now = Date.now();
+
+    // 1. Rate Limiting: Máximo de 20 mensagens por minuto (60.000 ms)
+    const timestamps = (this.rateLimiter.get(id) || []).filter(t => now - t < 60000);
+    if (timestamps.length >= 20) {
+      throw new Error('Calma aí! Limite de 20 mensagens por minuto atingido. Aguarde um instante.');
+    }
+    timestamps.push(now);
+    this.rateLimiter.set(id, timestamps);
+
+    // 2. Anti-Flood / Spam idêntico consecutivo (3.5 segundos)
+    const last = this.lastUserMsg.get(id);
+    if (last && last.text.toLowerCase() === cleanText.toLowerCase() && now - last.time < 3500) {
+      throw new Error('Evite enviar mensagens repetidas em sequência tão rápida.');
+    }
+    this.lastUserMsg.set(id, { text: cleanText, time: now });
+
+    // 3. Validação do personagem selecionado
+    const validChar = (characterId && VALID_CHARACTERS.has(characterId)) ? characterId : 'di5';
+
+    // 4. Criação do objeto seguro de mensagem
+    const message = {
+      id: `msg_${now}_${Math.random().toString(36).slice(2, 8)}`,
+      playerId: id,
+      nickname: sanitizeNickname(nickname),
+      characterId: validChar,
+      text: cleanText,
+      timestamp: now,
+      type: 'user'
+    };
+
+    this.messages.push(message);
+    if (this.messages.length > this.maxHistory) {
+      this.messages.shift();
+    }
+
+    return message;
+  }
+
+  addSystemNotice(text) {
+    const message = {
+      id: `sys_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
+      playerId: 'system',
+      nickname: 'SISTEMA',
+      characterId: 'di5',
+      text: String(text).slice(0, 300),
+      timestamp: Date.now(),
+      type: 'system'
+    };
+
+    this.messages.push(message);
+    if (this.messages.length > this.maxHistory) {
+      this.messages.shift();
+    }
+    return message;
+  }
+
+  handlePlayerJoin(playerId, nickname) {
+    if (!playerId || playerId.startsWith('local_')) return null;
+    const now = Date.now();
+    const lastJoin = this.joinAnnouncements.get(playerId) || 0;
+    // Não envia anúncio se reconectar em menos de 10 minutos
+    if (now - lastJoin < 10 * 60 * 1000) {
+      return null;
+    }
+    this.joinAnnouncements.set(playerId, now);
+    const cleanNick = sanitizeNickname(nickname);
+    return this.addSystemNotice(`👋 ${cleanNick} entrou na tropa!`);
+  }
+}
+
+const chatManager = new ChatManager(50);
+
 // Configuração do WebSocket Server
 wss.on('connection', async (ws, req) => {
   const session = onlineTracker.addConnection(ws, req);
@@ -509,9 +622,30 @@ wss.on('connection', async (ws, req) => {
       if (msg.type === 'IDENTIFY' && msg.data && msg.data.playerId) {
         onlineTracker.identifyPlayer(session.connectionId, msg.data.playerId);
         broadcastOnlineCount();
+        if (msg.data.nickname) {
+          const joinNotice = chatManager.handlePlayerJoin(msg.data.playerId, msg.data.nickname);
+          if (joinNotice) {
+            broadcastMessage('CHAT_MESSAGE', joinNotice);
+          }
+        }
       } else if (msg.type === 'PING') {
         onlineTracker.handlePong(session.connectionId);
         ws.send(JSON.stringify({ type: 'PONG', timestamp: Date.now() }));
+      } else if (msg.type === 'CHAT_SEND' && msg.data) {
+        try {
+          const newMsg = chatManager.addMessage({
+            playerId: session.playerId || msg.data.playerId,
+            nickname: msg.data.nickname,
+            characterId: msg.data.characterId,
+            text: msg.data.text
+          });
+          broadcastMessage('CHAT_MESSAGE', newMsg);
+        } catch (chatErr) {
+          ws.send(JSON.stringify({
+            type: 'CHAT_ERROR',
+            error: chatErr.message
+          }));
+        }
       }
     } catch (_) {}
   });
@@ -542,7 +676,8 @@ wss.on('connection', async (ws, req) => {
         totalConnections: onlineTracker.getTotalConnectionsCount(),
         leaderboard: lead,
         topGlobal: lead,
-        topByCharacter: topByChar
+        topByCharacter: topByChar,
+        chatHistory: chatManager.getHistory()
       }
     }));
   } catch (err) {
@@ -846,6 +981,13 @@ async function handleScoreSubmission(req, res) {
       topGlobal: lead,
       topByCharacter: topByChar
     });
+
+    // Anúncio em tempo real no CHAT DA TROPA
+    const noticeText = isNewGlobalLeader
+      ? `👑 ${player.nickname} ASSUMIU O 1º LUGAR GLOBAL COM ${finalScore} PTS!`
+      : `⚡ ${player.nickname} BATEU NOVO RECORDE PESSOAL: ${finalScore} PTS!`;
+    const sysMsg = chatManager.addSystemNotice(noticeText);
+    broadcastMessage('CHAT_MESSAGE', sysMsg);
   }
 
   res.json({
@@ -861,6 +1003,33 @@ async function handleScoreSubmission(req, res) {
 
 app.post('/api/session/finish', handleScoreSubmission);
 app.post('/api/leaderboard/submit', handleScoreSubmission);
+
+// ----------------------------------------------------------------------------
+// ROTAS DE CHAT REST (Fallback para clientes)
+// ----------------------------------------------------------------------------
+app.get('/api/chat/history', (req, res) => {
+  res.json({
+    success: true,
+    history: chatManager.getHistory(),
+    timestamp: Date.now()
+  });
+});
+
+app.post('/api/chat/send', (req, res) => {
+  const { playerId, nickname, characterId, text } = req.body || {};
+  try {
+    const newMsg = chatManager.addMessage({
+      playerId,
+      nickname,
+      characterId,
+      text
+    });
+    broadcastMessage('CHAT_MESSAGE', newMsg);
+    res.json({ success: true, message: newMsg });
+  } catch (err) {
+    res.status(400).json({ success: false, error: err.message });
+  }
+});
 
 // ----------------------------------------------------------------------------
 // SERVIR ARQUIVOS ESTÁTICOS

@@ -1737,11 +1737,378 @@
     color: #716986;
     margin-left: auto;
     padding-right: 6px;
+  /* ==========================================================================
+     CHAT DA TROPA — ESTÉTICA RETRÔ ARCADE INDIE (PC STUDIOS)
+     ========================================================================== */
+  .super-layout-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 12px;
+    width: 100%;
+    max-width: 1320px;
+    margin: 0 auto;
+    position: relative;
+    box-sizing: border-box;
+  }
+
+  .tropa-chat-panel {
+    width: 320px;
+    min-width: 300px;
+    height: 640px;
+    max-height: calc(100vh - 36px);
+    background: radial-gradient(ellipse at 50% 0%, #1e1338 0%, #0d081a 100%);
+    border: 1px solid #4d397a;
+    border-radius: 10px;
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.7), 0 0 18px rgba(168, 85, 247, 0.22);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: sticky;
+    top: 8px;
+    z-index: 150;
+    transition: width 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
+    box-sizing: border-box;
+  }
+
+  /* Painel Minimizado no Desktop */
+  .tropa-chat-panel.collapsed {
+    width: 44px;
+    min-width: 44px;
+    cursor: pointer;
+    background: #140d28;
+  }
+  .tropa-chat-panel.collapsed .chat-main-body,
+  .tropa-chat-panel.collapsed .chat-input-area,
+  .tropa-chat-panel.collapsed .chat-header-info {
+    display: none !important;
+  }
+  .tropa-chat-panel.collapsed .chat-header {
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    padding: 16px 8px;
+    justify-content: center;
+    height: 100%;
+  }
+
+  /* Cabeçalho do Chat */
+  .chat-header {
+    background: rgba(26, 17, 48, 0.95);
+    border-bottom: 1px solid #3c2c62;
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+  .chat-header-title {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--pixel-font);
+    font-size: 8.5px;
+    color: var(--accent-cyan);
+    text-shadow: 0 0 6px rgba(0, 240, 255, 0.4);
+    letter-spacing: 0.5px;
+  }
+  .chat-header-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .chat-online-pill {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 7.5px;
+    color: #a78bfa;
+    background: rgba(168, 85, 247, 0.15);
+    border: 1px solid rgba(168, 85, 247, 0.35);
+    border-radius: 4px;
+    padding: 2px 6px;
+    font-family: var(--pixel-font);
+  }
+  .chat-collapse-btn {
+    background: transparent;
+    border: 1px solid #4a3875;
+    color: #cbd5e1;
+    border-radius: 4px;
+    padding: 3px 6px;
+    cursor: pointer;
+    font-size: 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s ease;
+  }
+  .chat-collapse-btn:hover {
+    background: #3c2a64;
+    color: #fff;
+    border-color: var(--accent-purple);
+  }
+
+  /* Lista de Mensagens */
+  .chat-main-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    background: rgba(11, 7, 22, 0.7);
+    scroll-behavior: smooth;
+  }
+  .chat-main-body::-webkit-scrollbar {
+    width: 6px;
+  }
+  .chat-main-body::-webkit-scrollbar-thumb {
+    background: #3f2e66;
+    border-radius: 3px;
+  }
+  .chat-main-body::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.2);
+  }
+
+  /* Linha da Mensagem */
+  .chat-msg-row {
+    display: flex;
+    gap: 6px;
+    max-width: 95%;
+  }
+  .chat-msg-row.mine {
+    align-self: flex-end;
+    flex-direction: row-reverse;
+  }
+  .chat-msg-row.other {
+    align-self: flex-start;
+  }
+  .chat-msg-row.system {
+    align-self: center;
+    max-width: 100%;
+    width: 100%;
+  }
+
+  /* Bolha de Mensagem */
+  .chat-msg-bubble {
+    padding: 6px 9px;
+    border-radius: 8px;
+    font-size: 11px;
+    word-break: break-word;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+    position: relative;
+  }
+  .chat-msg-row.mine .chat-msg-bubble {
+    background: linear-gradient(135deg, rgba(76, 29, 149, 0.5) 0%, rgba(124, 58, 237, 0.4) 100%);
+    border: 1px solid #8b5cf6;
+    border-top-right-radius: 2px;
+  }
+  .chat-msg-row.other .chat-msg-bubble {
+    background: #19122c;
+    border: 1px solid #3d2d60;
+    border-top-left-radius: 2px;
+  }
+  .chat-msg-row.system .chat-msg-bubble {
+    width: 100%;
+    background: rgba(255, 214, 0, 0.08);
+    border: 1px dashed rgba(255, 214, 0, 0.35);
+    color: #ffd600;
+    text-align: center;
+    font-size: 9px;
+    padding: 6px 8px;
+    border-radius: 6px;
+  }
+
+  /* Metadados da Mensagem */
+  .chat-msg-meta {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-bottom: 3px;
+    font-size: 8px;
+    font-family: var(--pixel-font);
+  }
+  .chat-author {
+    color: var(--accent-cyan);
+    font-weight: bold;
+    letter-spacing: 0.3px;
+  }
+  .chat-msg-row.mine .chat-author {
+    color: #c084fc;
+  }
+  .chat-char-tag {
+    font-size: 7.5px;
+    color: #a78bfa;
+    font-family: var(--ui-font);
+  }
+  .chat-timestamp {
+    font-size: 7px;
+    color: #786f91;
+    margin-left: auto;
+  }
+
+  .chat-msg-text {
+    font-family: var(--ui-font);
+    font-size: 10.5px;
+    line-height: 1.35;
+    color: #f1edfa;
+    white-space: pre-wrap;
+  }
+
+  .chat-msg-avatar {
+    width: 22px;
+    height: 22px;
+    border-radius: 4px;
+    background: #2a1c4b;
+    border: 1px solid #4e397c;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    flex-shrink: 0;
+  }
+
+  /* Área de Digitação */
+  .chat-input-area {
+    padding: 8px 10px;
+    background: #140d26;
+    border-top: 1px solid #3c2c62;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+  .chat-input-row {
+    display: flex;
+    gap: 6px;
+  }
+  .chat-input-field {
+    flex: 1;
+    background: #090514;
+    border: 1px solid #4a3674;
+    border-radius: 6px;
+    color: #f8fafc;
+    font-family: var(--ui-font);
+    font-size: 11px;
+    padding: 7px 9px;
+    outline: none;
+    transition: border-color 0.15s ease;
+  }
+  .chat-input-field:focus {
+    border-color: var(--accent-cyan);
+    box-shadow: 0 0 8px rgba(0, 240, 255, 0.25);
+  }
+  .chat-input-field:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    background: #120b22;
+  }
+
+  .chat-send-btn {
+    background: linear-gradient(180deg, #9333ea 0%, #6b21a8 100%);
+    border: 1px solid #c084fc;
+    border-radius: 6px;
+    color: #fff;
+    font-family: var(--pixel-font);
+    font-size: 8px;
+    padding: 0 12px;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+    transition: transform 0.1s ease, filter 0.15s ease;
+  }
+  .chat-send-btn:hover:not(:disabled) {
+    filter: brightness(1.15);
+    box-shadow: 0 0 10px rgba(168, 85, 247, 0.5);
+  }
+  .chat-send-btn:active:not(:disabled) {
+    transform: translateY(1px);
+  }
+  .chat-send-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .chat-input-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 7.5px;
+    color: #79718d;
+    font-family: var(--pixel-font);
+  }
+  .chat-char-count.near-limit {
+    color: #f59e0b;
+  }
+  .chat-char-count.at-limit {
+    color: #ef4444;
+  }
+
+  /* Badge de Mensagens Não Lidas na Topbar */
+  .topbar-btn.chat-btn {
+    border-color: rgba(168, 85, 247, 0.55);
+    color: #d8b4fe;
+  }
+  .topbar-btn.chat-btn:hover {
+    border-color: #c084fc;
+    color: #f3e8ff;
+    box-shadow: 0 0 10px rgba(168, 85, 247, 0.4);
+  }
+  .chat-unread-badge {
+    background: #ff2a75;
+    color: #fff;
+    font-size: 7px;
+    font-family: var(--pixel-font);
+    padding: 1px 4px;
+    border-radius: 8px;
+    margin-left: 4px;
+    box-shadow: 0 0 6px rgba(255, 42, 117, 0.6);
+  }
+  .chat-unread-badge.hidden {
+    display: none;
+  }
+
+  /* Responsividade: Mobile e Telas Menores que 1200px */
+  @media (max-width: 1200px) {
+    .super-layout-wrapper {
+      display: block;
+    }
+    .tropa-chat-panel {
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: min(340px, 92vw);
+      height: 100vh;
+      max-height: 100vh;
+      border-radius: 12px 0 0 12px;
+      z-index: 10000;
+      box-shadow: -10px 0 35px rgba(0, 0, 0, 0.85);
+      transform: translateX(110%);
+      opacity: 0;
+      pointer-events: none;
+    }
+    .tropa-chat-panel.mobile-open {
+      transform: translateX(0);
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .chat-drawer-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.65);
+      backdrop-filter: blur(2px);
+      z-index: 9999;
+      display: none;
+    }
+    .chat-drawer-backdrop.active {
+      display: block;
+    }
   }
 </style>
 </head>
 
 <body>
+<div class="super-layout-wrapper" id="superLayoutWrapper">
 <div class="container">
   
   <!-- Notificação Flutuante de Novo Recorde Global em Tempo Real -->
@@ -1783,6 +2150,13 @@
       <button class="topbar-btn rank-btn selected" id="headerGlobalRankBtn" title="Abrir Ranking Global Online">
         <span class="btn-icon">🌍</span>
         <span class="btn-label">RANKING</span>
+      </button>
+
+      <!-- Botão Chat da Tropa (Novo) -->
+      <button class="topbar-btn chat-btn" id="headerChatToggleBtn" title="Abrir ou recolher o Chat da Tropa">
+        <span class="btn-icon">💬</span>
+        <span class="btn-label">CHAT</span>
+        <span class="chat-unread-badge hidden" id="chatUnreadBadge">0</span>
       </button>
     </div>
 
@@ -2105,7 +2479,49 @@
     A GRANDE FAMÍLIA GAME · SERVIDOR COMPARTILHADO + PARTIDAS INDIVIDUAIS + RANKING GLOBAL EM TEMPO REAL
   </footer>
 
-</div>
+</div> <!-- Fecha container do jogo -->
+
+  <!-- Backdrop para mobile ao abrir o chat -->
+  <div class="chat-drawer-backdrop" id="chatBackdrop"></div>
+
+  <!-- Painel Lateral: CHAT DA TROPA (PC STUDIOS) -->
+  <aside class="tropa-chat-panel" id="tropaChatPanel" aria-label="Chat Global da Tropa">
+    <!-- Cabeçalho Retrô Arcade -->
+    <div class="chat-header" id="chatHeaderBar">
+      <div class="chat-header-title">
+        <span aria-hidden="true">💬</span>
+        <span>CHAT DA TROPA</span>
+      </div>
+      <div class="chat-header-info">
+        <span class="chat-online-pill" id="chatOnlinePill" title="Jogadores conectados ao vivo">
+          <span class="live-dot connected" id="chatLiveDot" style="width:6px;height:6px;"></span>
+          <span id="chatOnlineCountText">1 ONLINE</span>
+        </span>
+        <button class="chat-collapse-btn" id="chatCollapseBtn" title="Recolher / Fechar Chat">
+          ◀
+        </button>
+      </div>
+    </div>
+
+    <!-- Área de Mensagens (Rolagem independente) -->
+    <div class="chat-main-body" id="chatMessagesBody">
+      <!-- Mensagens inseridas dinamicamente via textContent seguro -->
+    </div>
+
+    <!-- Área de Digitação e Envio -->
+    <div class="chat-input-area" id="chatInputArea">
+      <div class="chat-input-row">
+        <input type="text" id="chatTextInput" class="chat-input-field" maxlength="250" placeholder="Envie uma mensagem na tropa..." autocomplete="off">
+        <button class="chat-send-btn" id="chatSendBtn">ENVIAR</button>
+      </div>
+      <div class="chat-input-footer">
+        <span id="chatStatusNotice" style="color:#a78bfa;font-size:7.5px;">Enter para enviar</span>
+        <span class="chat-char-count" id="chatCharCounter">0/250</span>
+      </div>
+    </div>
+  </aside>
+
+</div> <!-- Fecha super-layout-wrapper -->
 
 <script>
 /**
@@ -5872,6 +6288,296 @@
     }
   }
 
+  // --------------------------------------------------------------------------
+  // CLIENTE CHAT DA TROPA — ESTÉTICA RETRÔ ARCADE (PC STUDIOS)
+  // --------------------------------------------------------------------------
+  const tropaChatPanel = document.getElementById('tropaChatPanel');
+  const chatMessagesBody = document.getElementById('chatMessagesBody');
+  const chatTextInput = document.getElementById('chatTextInput');
+  const chatSendBtn = document.getElementById('chatSendBtn');
+  const chatCharCounter = document.getElementById('chatCharCounter');
+  const chatStatusNotice = document.getElementById('chatStatusNotice');
+  const chatCollapseBtn = document.getElementById('chatCollapseBtn');
+  const headerChatToggleBtn = document.getElementById('headerChatToggleBtn');
+  const chatUnreadBadge = document.getElementById('chatUnreadBadge');
+  const chatOnlineCountText = document.getElementById('chatOnlineCountText');
+  const chatLiveDot = document.getElementById('chatLiveDot');
+  const chatBackdrop = document.getElementById('chatBackdrop');
+
+  let unreadChatCount = 0;
+  const mutedPlayers = new Set();
+
+  const CHAR_ICONS = {
+    di5: '🧢',
+    wendel: '⚽',
+    muniz: '👻',
+    clarinha: '🌸',
+    joao: '🏎️',
+    douglas: '🗡️',
+    nalu: '⭐',
+    beatriz: '🌊',
+    vitor: '🍄',
+    julya: '🎀',
+    junior: '⚡',
+    taynara: '🌱',
+    matheus: '💨',
+    emily: '🍔',
+    lais: '✨'
+  };
+
+  function setChatInputsEnabled(enabled, notice = null) {
+    if (chatTextInput) {
+      chatTextInput.disabled = !enabled;
+      chatTextInput.placeholder = enabled ? 'Envie uma mensagem na tropa...' : 'Chat indisponível no momento...';
+    }
+    if (chatSendBtn) {
+      chatSendBtn.disabled = !enabled;
+    }
+    if (chatStatusNotice && notice) {
+      chatStatusNotice.textContent = notice;
+      chatStatusNotice.style.color = enabled ? '#a78bfa' : '#f87171';
+    }
+  }
+
+  function isChatCollapsed() {
+    if (!tropaChatPanel) return true;
+    if (window.innerWidth <= 1200) {
+      return !tropaChatPanel.classList.contains('mobile-open');
+    }
+    return tropaChatPanel.classList.contains('collapsed');
+  }
+
+  function toggleChatPanel() {
+    if (!tropaChatPanel) return;
+    if (window.innerWidth <= 1200) {
+      const isOpen = tropaChatPanel.classList.contains('mobile-open');
+      if (isOpen) {
+        tropaChatPanel.classList.remove('mobile-open');
+        if (chatBackdrop) chatBackdrop.classList.remove('active');
+      } else {
+        tropaChatPanel.classList.add('mobile-open');
+        if (chatBackdrop) chatBackdrop.classList.add('active');
+        clearUnreadChat();
+        if (chatTextInput) chatTextInput.focus();
+      }
+    } else {
+      const isCollapsed = tropaChatPanel.classList.toggle('collapsed');
+      if (chatCollapseBtn) {
+        chatCollapseBtn.textContent = isCollapsed ? '▶' : '◀';
+      }
+      if (!isCollapsed) {
+        clearUnreadChat();
+        if (chatTextInput) chatTextInput.focus();
+      }
+    }
+  }
+
+  function clearUnreadChat() {
+    unreadChatCount = 0;
+    if (chatUnreadBadge) {
+      chatUnreadBadge.textContent = '0';
+      chatUnreadBadge.classList.add('hidden');
+    }
+  }
+
+  function loadChatHistory(history) {
+    if (!chatMessagesBody || !Array.isArray(history)) return;
+    chatMessagesBody.innerHTML = '';
+    history.forEach(item => appendChatMessage(item, false));
+    chatMessagesBody.scrollTop = chatMessagesBody.scrollHeight;
+  }
+
+  function appendChatMessage(msg) {
+    if (!msg || !chatMessagesBody) return;
+    if (msg.playerId && mutedPlayers.has(msg.playerId)) return;
+
+    const isMine = Boolean(playerProfile.playerId && msg.playerId && msg.playerId === playerProfile.playerId);
+    const isSystem = msg.type === 'system';
+
+    const row = document.createElement('div');
+    row.className = `chat-msg-row ${isSystem ? 'system' : (isMine ? 'mine' : 'other')}`;
+    if (msg.id) row.dataset.msgId = msg.id;
+
+    const bubble = document.createElement('div');
+    bubble.className = 'chat-msg-bubble';
+
+    if (isSystem) {
+      bubble.textContent = msg.text || '';
+      row.appendChild(bubble);
+    } else {
+      const meta = document.createElement('div');
+      meta.className = 'chat-msg-meta';
+
+      const author = document.createElement('span');
+      author.className = 'chat-author';
+      author.textContent = isMine ? 'VOCÊ' : (msg.nickname || 'Corredor');
+
+      const charTag = document.createElement('span');
+      charTag.className = 'chat-char-tag';
+      const charObj = friends.find(f => f.id === msg.characterId) || { name: msg.characterId || 'Corredor' };
+      charTag.textContent = `(${charObj.name})`;
+
+      const time = document.createElement('span');
+      time.className = 'chat-timestamp';
+      const d = msg.timestamp ? new Date(msg.timestamp) : new Date();
+      time.textContent = `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+
+      meta.append(author, charTag, time);
+
+      // Botão para silenciar jogador
+      if (!isMine && msg.playerId && !msg.playerId.startsWith('system')) {
+        const muteBtn = document.createElement('button');
+        muteBtn.textContent = '🔇';
+        muteBtn.title = 'Silenciar mensagens deste jogador localmente';
+        muteBtn.style.cssText = 'background:none;border:none;cursor:pointer;font-size:8px;padding:0;margin-left:4px;opacity:0.6;';
+        muteBtn.onclick = (e) => {
+          e.stopPropagation();
+          mutedPlayers.add(msg.playerId);
+          row.style.opacity = '0.35';
+          row.title = 'Jogador silenciado';
+        };
+        meta.appendChild(muteBtn);
+      }
+
+      const textEl = document.createElement('div');
+      textEl.className = 'chat-msg-text';
+      // Proteção rigorosa contra XSS com textContent
+      textEl.textContent = msg.text || '';
+
+      bubble.append(meta, textEl);
+
+      const avatar = document.createElement('div');
+      avatar.className = 'chat-msg-avatar';
+      avatar.textContent = CHAR_ICONS[msg.characterId] || '🎮';
+
+      if (isMine) {
+        row.append(bubble);
+      } else {
+        row.append(avatar, bubble);
+      }
+    }
+
+    const isScrolledToBottom = chatMessagesBody.scrollHeight - chatMessagesBody.clientHeight <= chatMessagesBody.scrollTop + 60;
+
+    chatMessagesBody.appendChild(row);
+
+    while (chatMessagesBody.children.length > 80) {
+      chatMessagesBody.removeChild(chatMessagesBody.firstChild);
+    }
+
+    if (isScrolledToBottom || isMine) {
+      chatMessagesBody.scrollTop = chatMessagesBody.scrollHeight;
+    }
+
+    if (!isMine && isChatCollapsed()) {
+      unreadChatCount++;
+      if (chatUnreadBadge) {
+        chatUnreadBadge.textContent = unreadChatCount > 99 ? '99+' : unreadChatCount;
+        chatUnreadBadge.classList.remove('hidden');
+      }
+    }
+  }
+
+  function updateCharCounter() {
+    if (!chatTextInput || !chatCharCounter) return;
+    const len = (chatTextInput.value || '').length;
+    chatCharCounter.textContent = `${len}/250`;
+    if (len >= 240) {
+      chatCharCounter.className = 'chat-char-count at-limit';
+    } else if (len >= 200) {
+      chatCharCounter.className = 'chat-char-count near-limit';
+    } else {
+      chatCharCounter.className = 'chat-char-count';
+    }
+  }
+
+  async function sendChatMessage() {
+    if (!chatTextInput) return;
+    const raw = chatTextInput.value || '';
+    const text = raw.trim();
+    if (!text) return;
+
+    if (text.length > 250) {
+      showChatError('Mensagem muito longa (máx 250 caracteres).');
+      return;
+    }
+
+    const curFriend = getCurrentFriend ? getCurrentFriend() : { id: 'di5' };
+    const payload = {
+      playerId: playerProfile.playerId,
+      nickname: playerProfile.nickname,
+      characterId: curFriend ? curFriend.id : 'di5',
+      text
+    };
+
+    if (onlineSocket && onlineSocket.readyState === WebSocket.OPEN) {
+      try {
+        onlineSocket.send(JSON.stringify({
+          type: 'CHAT_SEND',
+          data: payload
+        }));
+        chatTextInput.value = '';
+        updateCharCounter();
+        if (chatStatusNotice) {
+          chatStatusNotice.textContent = 'Enter para enviar';
+          chatStatusNotice.style.color = '#a78bfa';
+        }
+      } catch (err) {
+        console.error('[Chat] Erro ao enviar via WebSocket:', err);
+        fallbackRestSendChat(payload);
+      }
+    } else {
+      fallbackRestSendChat(payload);
+    }
+  }
+
+  async function fallbackRestSendChat(payload) {
+    try {
+      const res = await fetch(getOnlineApiUrl('/api/chat/send'), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      if (data && data.success) {
+        chatTextInput.value = '';
+        updateCharCounter();
+      } else {
+        showChatError(data?.error || 'Erro ao enviar mensagem.');
+      }
+    } catch (err) {
+      showChatError('Chat desconectado. Aguarde a reconexão.');
+    }
+  }
+
+  function showChatError(msg) {
+    if (chatStatusNotice) {
+      chatStatusNotice.textContent = `❌ ${msg}`;
+      chatStatusNotice.style.color = '#f87171';
+      setTimeout(() => {
+        if (chatStatusNotice) {
+          chatStatusNotice.textContent = 'Enter para enviar';
+          chatStatusNotice.style.color = '#a78bfa';
+        }
+      }, 4500);
+    }
+  }
+
+  // Inicializa listeners do Chat da Tropa
+  if (chatSendBtn) chatSendBtn.onclick = sendChatMessage;
+  if (chatTextInput) {
+    chatTextInput.onkeydown = (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        sendChatMessage();
+      }
+    };
+    chatTextInput.oninput = updateCharCounter;
+  }
+  if (chatCollapseBtn) chatCollapseBtn.onclick = toggleChatPanel;
+  if (headerChatToggleBtn) headerChatToggleBtn.onclick = toggleChatPanel;
+  if (chatBackdrop) chatBackdrop.onclick = toggleChatPanel;
+
   let currentOnlineState = 'CONNECTING';
   let currentOnlineCount = 0;
 
@@ -5883,6 +6589,10 @@
       const c = currentOnlineCount;
       if (onlineCountText) onlineCountText.textContent = `${c} ${c === 1 ? 'ONLINE' : 'ONLINE'}`;
       if (liveDotIndicator) liveDotIndicator.className = 'live-dot connected';
+      if (chatOnlineCountText) chatOnlineCountText.textContent = `${c} ONLINE`;
+      if (chatLiveDot) chatLiveDot.className = 'live-dot connected';
+      setChatInputsEnabled(true, 'Enter para enviar');
+
       if (rankingStatusBadge) {
         rankingStatusBadge.innerHTML = '🟢 ONLINE';
         rankingStatusBadge.style.borderColor = 'rgba(16, 185, 129, 0.55)';
@@ -5895,6 +6605,10 @@
     } else if (state === 'CONNECTING') {
       if (onlineCountText) onlineCountText.textContent = 'CONECTANDO...';
       if (liveDotIndicator) liveDotIndicator.className = 'live-dot connecting';
+      if (chatOnlineCountText) chatOnlineCountText.textContent = 'CONECTANDO...';
+      if (chatLiveDot) chatLiveDot.className = 'live-dot connecting';
+      setChatInputsEnabled(false, 'Conectando ao chat...');
+
       if (rankingStatusBadge) {
         rankingStatusBadge.innerHTML = '🟡 CONECTANDO';
         rankingStatusBadge.style.borderColor = 'rgba(234, 179, 8, 0.55)';
@@ -5907,6 +6621,10 @@
     } else if (state === 'RECONNECTING') {
       if (onlineCountText) onlineCountText.textContent = 'RECONECTANDO...';
       if (liveDotIndicator) liveDotIndicator.className = 'live-dot reconnecting';
+      if (chatOnlineCountText) chatOnlineCountText.textContent = 'RECONECTANDO...';
+      if (chatLiveDot) chatLiveDot.className = 'live-dot reconnecting';
+      setChatInputsEnabled(false, 'Reconectando à tropa...');
+
       if (rankingStatusBadge) {
         rankingStatusBadge.innerHTML = '🟠 RECONECTANDO';
         rankingStatusBadge.style.borderColor = 'rgba(249, 115, 22, 0.55)';
@@ -5919,6 +6637,10 @@
     } else { // DISCONNECTED
       if (onlineCountText) onlineCountText.textContent = 'DESCONECTADO';
       if (liveDotIndicator) liveDotIndicator.className = 'live-dot disconnected';
+      if (chatOnlineCountText) chatOnlineCountText.textContent = 'DESCONECTADO';
+      if (chatLiveDot) chatLiveDot.className = 'live-dot disconnected';
+      setChatInputsEnabled(false, '🔴 Chat desconectado');
+
       if (rankingStatusBadge) {
         rankingStatusBadge.innerHTML = '🔴 OFFLINE';
         rankingStatusBadge.style.borderColor = '#ef4444';
@@ -6062,7 +6784,10 @@
           try {
             onlineSocket.send(JSON.stringify({
               type: 'IDENTIFY',
-              data: { playerId: playerProfile.playerId }
+              data: {
+                playerId: playerProfile.playerId,
+                nickname: playerProfile.nickname
+              }
             }));
           } catch (_) {}
         }
@@ -6082,10 +6807,19 @@
               if (activeLeaderboardTab === 'global') {
                 renderGlobalLeaderboard();
               }
+              if (msg.data.chatHistory && Array.isArray(msg.data.chatHistory)) {
+                loadChatHistory(msg.data.chatHistory);
+              }
             }
           } else if (msg.type === 'ONLINE_COUNT') {
             const count = (msg.data && typeof msg.data.count === 'number') ? msg.data.count : 0;
             updateOnlineState('CONNECTED', count);
+          } else if (msg.type === 'CHAT_MESSAGE') {
+            if (msg.data) {
+              appendChatMessage(msg.data);
+            }
+          } else if (msg.type === 'CHAT_ERROR') {
+            showChatError(msg.error || 'Erro no chat');
           } else if (msg.type === 'NEW_RECORD') {
             if (msg.data) {
               showGlobalRecordBanner(msg.data);

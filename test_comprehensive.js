@@ -139,7 +139,68 @@ async function runTests() {
     const p2ReceivedNewRecord = wsMessages2.some(m => m.type === 'NEW_RECORD' && m.data && m.data.score === 45);
     assert(p1ReceivedNewRecord && p2ReceivedNewRecord, 'Ambos os clientes WebSocket receberam evento NEW_RECORD em tempo real');
 
-    // 10. Desconexão de Cliente 2 e Atualização do Contador
+    // 10. Envio e Broadcast de Mensagem de Chat Real-Time (Jogador 1 -> Jogador 2)
+    ws1.send(JSON.stringify({
+      type: 'CHAT_SEND',
+      data: {
+        playerId: player1.playerId,
+        nickname: 'Jogador Alfa',
+        characterId: 'di5',
+        text: 'Bora tropa! Consegui 45 pts!'
+      }
+    }));
+    await wait(400);
+
+    const p1ChatReceived = wsMessages1.some(m => m.type === 'CHAT_MESSAGE' && m.data && m.data.text === 'Bora tropa! Consegui 45 pts!');
+    const p2ChatReceived = wsMessages2.some(m => m.type === 'CHAT_MESSAGE' && m.data && m.data.text === 'Bora tropa! Consegui 45 pts!');
+    assert(p1ChatReceived && p2ChatReceived, 'Chat em Tempo Real: mensagem transmitida e recebida por ambos os jogadores');
+
+    // 11. Validação de Segurança: Mensagem acima de 250 caracteres é rejeitada com CHAT_ERROR
+    const hugeText = 'A'.repeat(260);
+    ws2.send(JSON.stringify({
+      type: 'CHAT_SEND',
+      data: {
+        playerId: player2.playerId,
+        nickname: 'Jogador Beta',
+        characterId: 'wendel',
+        text: hugeText
+      }
+    }));
+    await wait(300);
+
+    const p2GotCharLimitError = wsMessages2.some(m => m.type === 'CHAT_ERROR' && m.error && m.error.includes('250'));
+    assert(p2GotCharLimitError, 'Segurança do Chat: mensagem acima de 250 caracteres rejeitada com CHAT_ERROR sem derrubar conexão');
+
+    // 12. Validação de Segurança: Mensagem vazia rejeitada
+    ws2.send(JSON.stringify({
+      type: 'CHAT_SEND',
+      data: {
+        playerId: player2.playerId,
+        nickname: 'Jogador Beta',
+        characterId: 'wendel',
+        text: '   '
+      }
+    }));
+    await wait(300);
+
+    const p2GotEmptyError = wsMessages2.some(m => m.type === 'CHAT_ERROR' && m.error && m.error.includes('espaços'));
+    assert(p2GotEmptyError, 'Segurança do Chat: mensagem de espaços em branco rejeitada');
+
+    // 13. Teste de Histórico em nova conexão (Jogador 3 conecta e recebe o histórico com as mensagens anteriores)
+    const wsMessages3 = [];
+    const ws3 = new WebSocket(`${WS_URL}?playerId=p3_test&connectionId=conn_3_test`);
+    ws3.on('message', data => {
+      try { wsMessages3.push(JSON.parse(data.toString())); } catch (e) {}
+    });
+    await wait(400);
+
+    const initMsg = wsMessages3.find(m => m.type === 'INIT');
+    const historyContainsMsg = initMsg && initMsg.data && Array.isArray(initMsg.data.chatHistory) &&
+      initMsg.data.chatHistory.some(m => m.text === 'Bora tropa! Consegui 45 pts!');
+    assert(historyContainsMsg, 'Histórico do Chat: novo cliente recebe as últimas mensagens no evento INIT');
+    ws3.close();
+
+    // 14. Desconexão de Cliente 2 e Atualização do Contador
     ws2Tab2.close();
     ws2.close();
     await wait(500);
@@ -147,7 +208,7 @@ async function runTests() {
     const countAfterDisconnect = await request('/api/players/online');
     assert(countAfterDisconnect.body.onlineCount === 1, 'Desconexão do Cliente 2 reduz contador corretamente para 1');
 
-    // 11. Limpeza final
+    // 15. Limpeza final
     ws1.close();
     await wait(300);
 

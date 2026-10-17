@@ -2,7 +2,7 @@
   "name": "a-grande-familia-game",
   "version": "1.0.0",
   "description": "A GRANDE FAMÍLIA GAME — Jogo de corrida retrô em Pixel Art com ranking online global em tempo real!",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "start": "node server.js",
     "dev": "node server.js",
