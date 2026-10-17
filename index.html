@@ -1551,8 +1551,9 @@
       grid-template-columns: 1fr;
     }
     .friends-carousel {
-      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-      max-height: 220px;
+      grid-template-columns: repeat(auto-fill, minmax(88px, 1fr));
+      max-height: 240px;
+      gap: 6px;
     }
     .arcade-hud {
       top: 4px;
@@ -1565,7 +1566,7 @@
       gap: 3px;
     }
     .skill-hud-card {
-      display: none !important; /* No mobile a habilidade fica 100% no botão de toque grande inferior sem poluir a tela */
+      display: none !important; /* No mobile a habilidade fica 100% no botão de toque grande inferior */
     }
     .hud-player {
       padding: 3px 6px;
@@ -1593,14 +1594,16 @@
       gap: 2px;
     }
     .game-toast {
-      display: none !important; /* Desativa totalmente toasts durante jogo no celular */
+      display: none !important;
     }
     body {
       padding: 4px 4px 18px;
     }
     header.indie-topbar {
-      padding: 0 8px;
-      gap: 6px;
+      padding: 0 6px;
+      gap: 4px;
+      height: 38px;
+      min-height: 38px;
     }
     .brand-title-box .brand-badge {
       display: none;
@@ -1612,18 +1615,63 @@
       display: inline-flex;
     }
     .topbar-center {
-      gap: 4px;
+      gap: 3px;
+      flex: 1;
+      justify-content: center;
     }
     .topbar-btn {
-      font-size: 7.5px;
-      padding: 0 7px;
-      height: 30px;
-      min-height: 30px;
+      font-size: 7px;
+      padding: 0 6px;
+      height: 28px;
+      min-height: 28px;
+      gap: 3px;
     }
     .topbar-indicator.online-indicator {
-      font-size: 7.5px;
-      padding: 0 7px;
-      height: 30px;
+      font-size: 7px;
+      padding: 0 6px;
+      height: 28px;
+      gap: 3px;
+    }
+    .topbar-btn .btn-icon svg {
+      width: 11px;
+      height: 11px;
+    }
+    .touch-ctrl-btn {
+      min-height: 52px;
+      padding: 10px 4px;
+      font-size: clamp(9px, 2.8vw, 11px);
+    }
+    .touch-ctrl-btn .sub-key {
+      display: none; /* Oculta teclas de teclado nos botões touch do celular */
+    }
+    .mobile-controls {
+      gap: 6px;
+      margin-top: 5px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    header.indie-topbar {
+      height: 36px;
+      min-height: 36px;
+      padding: 0 4px;
+      gap: 2px;
+    }
+    .brand-name {
+      display: none; /* No celular estreito, mantém a coroa pixel art para ganhar espaço máximo */
+    }
+    .topbar-btn .btn-label {
+      font-size: 6.5px;
+    }
+    .topbar-btn {
+      padding: 0 4px;
+      height: 27px;
+      min-height: 27px;
+    }
+    .topbar-indicator.online-indicator {
+      padding: 0 4px;
+      height: 27px;
+      font-size: 6.5px;
     }
   }
 
@@ -1757,9 +1805,16 @@
   }
 
   .container {
-    width: 960px;
+    width: min(960px, 100%);
     max-width: 100%;
-    flex-shrink: 0;
+    box-sizing: border-box;
+  }
+
+  @media (min-width: 1281px) {
+    .container {
+      width: 960px;
+      flex-shrink: 0;
+    }
   }
 
   .tropa-chat-panel {
@@ -2084,12 +2139,21 @@
     display: none;
   }
 
-  /* Responsividade: Mobile e Telas Menores que 1310px */
-  @media (max-width: 1310px) {
+  /* Responsividade: Mobile, Tablets e Telas Menores que 1280px */
+  @media (max-width: 1280px) {
     .super-layout-wrapper {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+      display: block;
+      width: 100%;
+      max-width: 100%;
+      margin: 0 auto;
+      padding: 0;
+      gap: 0;
+    }
+    .container {
+      width: 100% !important;
+      max-width: 960px !important;
+      padding: 0 4px !important;
+      box-sizing: border-box !important;
     }
     .tropa-chat-panel {
       position: fixed;
@@ -2105,6 +2169,7 @@
       transform: translateX(110%);
       opacity: 0;
       pointer-events: none;
+      transition: transform 0.25s ease, opacity 0.25s ease;
     }
     .tropa-chat-panel.mobile-open {
       transform: translateX(0);
@@ -6353,7 +6418,7 @@
 
   function isChatCollapsed() {
     if (!tropaChatPanel) return true;
-    if (window.innerWidth <= 1310) {
+    if (window.innerWidth <= 1280) {
       return !tropaChatPanel.classList.contains('mobile-open');
     }
     return tropaChatPanel.classList.contains('collapsed');
@@ -6361,7 +6426,7 @@
 
   function toggleChatPanel() {
     if (!tropaChatPanel) return;
-    if (window.innerWidth <= 1310) {
+    if (window.innerWidth <= 1280) {
       const isOpen = tropaChatPanel.classList.contains('mobile-open');
       if (isOpen) {
         tropaChatPanel.classList.remove('mobile-open');
